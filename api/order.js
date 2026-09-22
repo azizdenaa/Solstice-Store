@@ -1,16 +1,14 @@
 /**
- * Order API for Solstice Store.
+ * Solstice Store order API backed by Supabase Postgres via its REST API.
  *
  * Required Vercel environment variables:
- * - DISCORD_WEBHOOK_URL: Discord incoming webhook URL.
- * - ADMIN_API_KEY: long random secret used only by a trusted admin tool/server.
+ * SUPABASE_URL=https://<project>.supabase.co
+ * SUPABASE_SERVICE_ROLE_KEY=<server-only service role key>
+ * DISCORD_WEBHOOK_URL=<Discord webhook>
+ * ADMIN_API_KEY=<long random admin secret>
  *
- * `orders` is an in-memory cache. Vercel serverless instances can restart or
- * differ between requests, so it is not permanent storage. Replace this Map
- * with a database adapter before using this in production.
+ * Never expose SUPABASE_SERVICE_ROLE_KEY or ADMIN_API_KEY to the browser.
  */
-
-const orders = globalThis.__SOLSTICE_ORDERS || (globalThis.__SOLSTICE_ORDERS = new Map());
 
 const STATUS = Object.freeze({
   PAYMENT: "MENUNGGU PEMBAYARAN",
@@ -23,7 +21,6 @@ const TRANSITIONS = new Map([
   [STATUS.VERIFY, STATUS.PROCESSING],
   [STATUS.PROCESSING, STATUS.COMPLETE],
 ]);
-
 const PRODUCTS = Object.freeze({
   "50 Robux": 8000, "100 Robux": 16000, "200 Robux": 32000, "300 Robux": 48000,
   "500 Robux": 65000, "1.000 Robux": 130000, "1.500 Robux": 240000,
@@ -32,9 +29,8 @@ const PRODUCTS = Object.freeze({
   "8.000 Robux": 1280000, "9.000 Robux": 1440000, "10.000 Robux": 1600000,
 });
 
-function sendJson(res, statusCode, payload) {
-  res.status(statusCode);
-  res.setHeader("Content-Type", "application/json; charset=utf-8");
+function sendJson(res, code, payload) {
+  res.status(code).setHeader("Content-Type", "application/json; charset=utf-8");
   return res.json(payload);
 }
 function bodyOf(req) {
@@ -43,14 +39,23 @@ function bodyOf(req) {
   return null;
 }
 function validOrderId(value) { return typeof value === "string" && /^SOL-[A-Z0-9]{6,32}$/.test(value); }
-function publicOrder(order) {
-  return { orderId: order.orderId, username: order.username, product: order.product, amount: order.amount, paymentMethod: order.paymentMethod, status: order.status, createdAt: order.createdAt, updatedAt: order.updatedAt };
+function publicOrder(row) {
+  return { orderId: row.order_id, username: row.username, product: row.product, amount: row.amount, paymentMethod: row.payment_method, status: row.status, createdAt: row.created_at, updatedAt: row.updated_at };
+}
+function configured() { return process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY; }
+function supabaseHeaders(extra = {}) { return { apikey: process.env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`, "Content-Type": "application/json", ...extra }; }
+async function dbRequest(path, options = {}) {
+  const response = await fetch(`${process.env.SUPABASE_URL}/rest/v1/${path}`, { ...options, headers: supabaseHeaders(options.headers) });
+  const text = await response.text();
+  let data = null; try { data = text ? JSON.parse(text) : null; } catch (_error) { data = { message: text }; }
+  if (!response.ok) { const error = new Error(data?.message || "Database request failed"); error.status = response.status; throw error; }
+  return data;
 }
 function adminAuthorized(req) {
-  const configured = process.env.ADMIN_API_KEY;
-  const header = req.headers?.authorization || "";
-  const supplied = header.startsWith("Bearer ") ? header.slice(7) : req.headers?.["x-admin-key"];
-  return Boolean(configured && supplied && supplied === configured);
+  const configuredKey = process.env.ADMIN_API_KEY;
+  const auth = req.headers?.authorization || "";
+  const supplied = auth.startsWith("Bearer ") ? auth.slice(7) : req.headers?.["x-admin-key"];
+  return Boolean(configuredKey && supplied && supplied === configuredKey);
 }
 async function notifyDiscord(order, title = "Order Baru") {
   if (!process.env.DISCORD_WEBHOOK_URL) throw new Error("DISCORD_WEBHOOK_URL missing");
@@ -69,51 +74,55 @@ async function notifyDiscord(order, title = "Order Baru") {
 }
 
 export default async function handler(req, res) {
+  if (!configured()) return sendJson(res, 500, { ok: false, message: "SUPABASE_URL atau SUPABASE_SERVICE_ROLE_KEY belum dikonfigurasi." });
+
   if (req.method === "GET") {
-    const rawId = Array.isArray(req.query?.orderId) ? req.query.orderId[0] : req.query?.orderId;
-    if (!validOrderId(rawId)) return sendJson(res, 400, { ok: false, message: "Order ID tidak valid." });
-    const order = orders.get(rawId);
-    if (!order) return sendJson(res, 404, { ok: false, message: "Order tidak ditemukan." });
-    return sendJson(res, 200, { ok: true, order: publicOrder(order) });
+    const id = Array.isArray(req.query?.orderId) ? req.query.orderId[0] : req.query?.orderId;
+    if (!validOrderId(id)) return sendJson(res, 400, { ok: false, message: "Order ID tidak valid." });
+    try {
+      const rows = await dbRequest(`orders?order_id=eq.${encodeURIComponent(id)}&select=*`);
+      if (!rows?.length) return sendJson(res, 404, { ok: false, message: "Order tidak ditemukan." });
+      return sendJson(res, 200, { ok: true, order: publicOrder(rows[0]) });
+    } catch (_error) { return sendJson(res, 502, { ok: false, message: "Gagal membaca status order." }); }
   }
 
   if (req.method === "PATCH") {
-    if (!adminAuthorized(req)) return sendJson(res, 401, { ok: false, message: "Akses admin tidak sah." });
-    if (!process.env.ADMIN_API_KEY) return sendJson(res, 500, { ok: false, message: "ADMIN_API_KEY belum dikonfigurasi." });
-    let input;
-    try { input = bodyOf(req); } catch (_error) { return sendJson(res, 400, { ok: false, message: "Request body harus berupa JSON yang valid." }); }
+    if (!process.env.ADMIN_API_KEY || !adminAuthorized(req)) return sendJson(res, 401, { ok: false, message: "Akses admin tidak sah." });
+    let input; try { input = bodyOf(req); } catch (_error) { return sendJson(res, 400, { ok: false, message: "Request body harus berupa JSON yang valid." }); }
     const { orderId, status } = input || {};
-    if (!validOrderId(orderId)) return sendJson(res, 400, { ok: false, message: "Order ID tidak valid." });
-    if (!STATUS_VALUES.has(status)) return sendJson(res, 400, { ok: false, message: "Status tidak valid." });
-    const order = orders.get(orderId);
-    if (!order) return sendJson(res, 404, { ok: false, message: "Order tidak ditemukan." });
-    if (TRANSITIONS.get(order.status) !== status) return sendJson(res, 409, { ok: false, message: "Perubahan status tidak mengikuti alur yang diizinkan." });
-    const updated = { ...order, status, updatedAt: new Date().toISOString() };
-    try { await notifyDiscord(updated, "Pembaruan Status Order"); } catch (_error) { return sendJson(res, 502, { ok: false, message: "Status berubah dibatalkan karena notifikasi Discord gagal." }); }
-    orders.set(orderId, updated);
-    return sendJson(res, 200, { ok: true, order: publicOrder(updated) });
+    if (!validOrderId(orderId) || !STATUS_VALUES.has(status)) return sendJson(res, 400, { ok: false, message: "Order ID atau status tidak valid." });
+    try {
+      const currentRows = await dbRequest(`orders?order_id=eq.${encodeURIComponent(orderId)}&select=*`);
+      if (!currentRows?.length) return sendJson(res, 404, { ok: false, message: "Order tidak ditemukan." });
+      const current = currentRows[0];
+      if (TRANSITIONS.get(current.status) !== status) return sendJson(res, 409, { ok: false, message: "Perubahan status tidak mengikuti alur yang diizinkan." });
+      const updatedRows = await dbRequest(`orders?order_id=eq.${encodeURIComponent(orderId)}&status=eq.${encodeURIComponent(current.status)}&select=*`, { method: "PATCH", headers: { Prefer: "return=representation" }, body: JSON.stringify({ status, updated_at: new Date().toISOString() }) });
+      if (!updatedRows?.length) return sendJson(res, 409, { ok: false, message: "Order berubah oleh admin lain. Coba lagi." });
+      const updated = publicOrder(updatedRows[0]);
+      try { await notifyDiscord(updated, "Pembaruan Status Order"); } catch (_error) { return sendJson(res, 502, { ok: false, message: "Status tersimpan, tetapi notifikasi Discord gagal." }); }
+      return sendJson(res, 200, { ok: true, order: updated });
+    } catch (_error) { return sendJson(res, 502, { ok: false, message: "Gagal memperbarui status order." }); }
   }
 
-  if (req.method !== "POST") {
-    res.setHeader("Allow", "GET, POST, PATCH");
-    return sendJson(res, 405, { ok: false, message: "Method tidak diizinkan." });
-  }
+  if (req.method !== "POST") { res.setHeader("Allow", "GET, POST, PATCH"); return sendJson(res, 405, { ok: false, message: "Method tidak diizinkan." }); }
   if (!process.env.DISCORD_WEBHOOK_URL) return sendJson(res, 500, { ok: false, message: "DISCORD_WEBHOOK_URL belum dikonfigurasi." });
-  let input;
-  try { input = bodyOf(req); } catch (_error) { return sendJson(res, 400, { ok: false, message: "Request body harus berupa JSON yang valid." }); }
-  if (!input) return sendJson(res, 400, { ok: false, message: "Request body harus berupa object JSON." });
-  const { orderId, username, product, amount, paymentMethod } = input;
+  let input; try { input = bodyOf(req); } catch (_error) { return sendJson(res, 400, { ok: false, message: "Request body harus berupa JSON yang valid." }); }
+  const { orderId, username, product, amount, paymentMethod } = input || {};
   const numericAmount = typeof amount === "number" ? amount : Number(amount);
   if (!validOrderId(orderId)) return sendJson(res, 400, { ok: false, message: "Order ID tidak valid." });
   if (typeof username !== "string" || !/^[A-Za-z0-9_]{3,30}$/.test(username)) return sendJson(res, 400, { ok: false, message: "Username Roblox tidak valid." });
-  if (typeof product !== "string" || !Object.prototype.hasOwnProperty.call(PRODUCTS, product)) return sendJson(res, 400, { ok: false, message: "Produk tidak valid." });
+  if (typeof product !== "string" || PRODUCTS[product] === undefined) return sendJson(res, 400, { ok: false, message: "Produk tidak valid." });
   if (PRODUCTS[product] !== numericAmount || !Number.isSafeInteger(numericAmount)) return sendJson(res, 400, { ok: false, message: "Nominal produk tidak valid." });
   if (paymentMethod !== "SeaBank") return sendJson(res, 400, { ok: false, message: "Metode pembayaran tidak valid." });
-  if (orders.has(orderId)) return sendJson(res, 409, { ok: false, message: "Order ID sudah digunakan." });
-  const order = { orderId, username, product, amount: numericAmount, paymentMethod, status: STATUS.VERIFY, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-  try { await notifyDiscord(order); } catch (_error) { return sendJson(res, 502, { ok: false, message: "Order gagal dikirim ke Discord." }); }
-  orders.set(orderId, order);
-  return sendJson(res, 201, { ok: true, order: publicOrder(order) });
+  const now = new Date().toISOString();
+  const row = { order_id: orderId, username, product, amount: numericAmount, payment_method: paymentMethod, status: STATUS.VERIFY, created_at: now, updated_at: now };
+  try {
+    const inserted = await dbRequest("orders", { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify(row) });
+    if (!inserted?.length) return sendJson(res, 502, { ok: false, message: "Order gagal disimpan." });
+    const order = publicOrder(inserted[0]);
+    try { await notifyDiscord(order); } catch (_error) { await dbRequest(`orders?order_id=eq.${encodeURIComponent(orderId)}`, { method: "DELETE" }).catch(() => {}); return sendJson(res, 502, { ok: false, message: "Order gagal dikirim ke Discord." }); }
+    return sendJson(res, 201, { ok: true, order });
+  } catch (error) { return sendJson(res, error.status === 409 ? 409 : 502, { ok: false, message: error.status === 409 ? "Order ID sudah digunakan." : "Gagal menyimpan order." }); }
 }
 
 export { STATUS, PRODUCTS };
