@@ -27,7 +27,8 @@ const PRODUCTS = Object.freeze({
 const PAYMENT_METHODS = new Set(["SeaBank", "QRIS GoPay Merchant"]);
 
 function sendJson(res, statusCode, payload) {
-  res.status(statusCode).setHeader("Content-Type", "application/json; charset=utf-8");
+  res.status(statusCode);
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
   return res.json(payload);
 }
 
@@ -51,9 +52,8 @@ function validContact(method, value) {
 }
 
 async function notifyDiscord(order) {
-  if (!process.env.DISCORD_WEBHOOK_URL) {
-    throw new Error("DISCORD_WEBHOOK_URL belum dikonfigurasi di Vercel.");
-  }
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  if (!webhookUrl) throw new Error("DISCORD_WEBHOOK_URL belum dikonfigurasi di Vercel.");
 
   const payload = {
     embeds: [{
@@ -76,13 +76,21 @@ async function notifyDiscord(order) {
     }],
   };
 
-  const response = await fetch(process.env.DISCORD_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
 
-  if (!response.ok) throw new Error("Discord webhook menolak request.");
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    if (!response.ok) throw new Error(`Discord webhook returned HTTP ${response.status}.`);
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export default async function handler(req, res) {
@@ -113,7 +121,7 @@ export default async function handler(req, res) {
   if (typeof username !== "string" || !/^[A-Za-z0-9_]{3,30}$/.test(username)) {
     return sendJson(res, 400, { ok: false, message: "Username Roblox tidak valid." });
   }
-  if (typeof product !== "string" || PRODUCTS[product] === undefined) {
+  if (typeof product !== "string" || !Object.prototype.hasOwnProperty.call(PRODUCTS, product)) {
     return sendJson(res, 400, { ok: false, message: "Produk tidak valid." });
   }
   if (!Number.isSafeInteger(numericAmount) || PRODUCTS[product] !== numericAmount) {
