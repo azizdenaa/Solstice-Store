@@ -1,40 +1,379 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#08080c">
-<title>Solstice Store — Robux Store</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
-:root{--bg:#050507;--panel:#0b0b10;--line:#2a2935;--text:#f8f7fb;--muted:#a7a4b2;--purple:#b79cff;--ok:#7de3b0}*{box-sizing:border-box;scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background:radial-gradient(circle at 20% 0%,#5e45a515,transparent 35%),radial-gradient(circle at 90% 30%,#9b7cff0b,transparent 35%)}a{color:inherit;text-decoration:none}.shell{max-width:1220px;margin:auto;padding:0 22px}.nav{position:sticky;top:0;z-index:30;height:76px;border-bottom:1px solid #282733;background:#050507e8;backdrop-filter:blur(18px);display:flex;align-items:center}.navin{width:min(1220px,100%);margin:auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:18px}.logo{height:54px;width:155px;object-fit:contain}.menus{display:flex;gap:5px;padding:5px;border:1px solid #2a2935;border-radius:999px;background:#0a0a0f}.menus a{padding:10px 17px;border-radius:999px;font-size:13px;color:#bbb8c5}.menus a:hover,.menus a.active{background:#1b1925;color:#fff}.login{border:1px solid #7e72a0;border-radius:999px;padding:11px 16px;font-size:13px}.hero{min-height:440px;display:flex;align-items:center;border-bottom:1px solid #181720;background:radial-gradient(circle at 78% 45%,#9b7cff26,transparent 28%)}.hero-content{padding:70px 0;max-width:720px}.eyebrow{letter-spacing:5px;font-size:11px;color:#c8b9f7;font-weight:800}.hero h1{font-family:'Playfair Display',serif;font-size:clamp(48px,7vw,86px);line-height:.95;margin:18px 0 16px;letter-spacing:-3px}.hero h1 span{color:var(--purple)}.hero p{color:#c4c1cb;line-height:1.7}.cta{display:inline-flex;margin-top:16px;padding:14px 22px;border-radius:999px;background:linear-gradient(135deg,#f2efff,#bda9ff);color:#17131f;font-weight:900}.mini{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap}.pill{border:1px solid #373442;border-radius:999px;padding:8px 12px;color:#aaa7b4;font-size:11px}.section{padding:54px 0}.panel{border:1px solid #2a2935;border-radius:24px;background:linear-gradient(145deg,#0e0e14dd,#07070bdd);overflow:hidden}.store-head{padding:20px 24px;border-bottom:1px solid #24232e;display:flex;justify-content:space-between;gap:20px;align-items:center}.store-head b{font-family:'Playfair Display',serif;font-size:20px}.store-head small{color:var(--muted)}.method{border:1px solid #4b4163;border-radius:999px;padding:10px 15px;color:#ddd3ff;font-size:12px}.grid{padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.product{border:1px solid #292834;border-radius:17px;padding:16px;background:linear-gradient(145deg,#121219,#09090e);position:relative}.product:hover{border-color:#74639a}.robux-icon{width:43px;height:43px;border:3px solid #eee;border-radius:13px;display:grid;place-items:center;margin-bottom:13px}.robux-icon:before{content:'';width:19px;height:19px;border:3px solid #eee;border-radius:50%}.product h3{margin:0;font-size:17px}.unit{font-size:10px;color:#85818f;letter-spacing:1px}.price{font-size:17px;font-weight:850;margin:7px 0 14px}.old{text-decoration:line-through;color:#67636e;font-size:11px;margin-right:4px}.promo{border-color:#7658a8}.badge{position:absolute;right:12px;top:13px;color:#d7c9ff;border:1px solid #7257a8;border-radius:999px;padding:4px 7px;font-size:9px;font-weight:800}.buy,.copy-order{border:1px solid #7966a1;background:#0c0b11;color:#e4ddff;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer}.buy{width:100%;font-size:11px}.payment{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #25242e}.payment>div{padding:22px;border-right:1px solid #25242e}.payment>div:last-child{border:0}.payment h3{margin:0 0 8px;font-size:14px}.payment p,.payment li{font-size:12px;color:#aaa7b4;line-height:1.65}.account{font-size:22px;font-weight:900;margin:7px 0}.copy{border:1px solid #3d3849;background:#15131c;color:#ddd5ee;border-radius:9px;padding:7px 10px;cursor:pointer;font-size:11px}.features,.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:15px}.info-grid{grid-template-columns:repeat(3,1fr)}.feature,.info{border:1px solid #292834;border-radius:17px;padding:19px;background:#0a0a0f}.feature b{display:block;margin:9px 0 5px;font-size:13px}.feature span,.info p{font-size:11px;color:#96929f;line-height:1.6}.info h3{margin-top:0}.modal{display:none;position:fixed;inset:0;background:#000d;z-index:100;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modalbox{width:min(560px,100%);max-height:90vh;overflow:auto;border:1px solid #40394e;border-radius:23px;background:linear-gradient(145deg,#17151e,#09090e);padding:24px}.modalbox h2{margin:0 0 8px;font-family:'Playfair Display',serif;font-size:28px}.muted{color:#9d99a7;font-size:12px}.summary,.invoice{margin:15px 0;border:1px solid #2b2934;background:#09090e;border-radius:14px;padding:14px;line-height:1.7;font-size:13px}.label{display:block;color:#aaa7b3;font-size:11px;margin:12px 0 6px}input,select{width:100%;padding:13px;border-radius:11px;border:1px solid #35323e;background:#060609;color:#fff;outline:none}.input-group{display:flex;gap:10px}.input-group select{flex:0 0 140px}.step{display:none}.step.active{display:block}.stepbar{display:flex;gap:6px;margin:16px 0}.stepbar span{flex:1;text-align:center;padding:7px;border-radius:8px;background:#191721;color:#817b8d;font-size:10px}.stepbar span.active{background:#7055a8;color:white}.pay-option{display:block;border:1px solid #393244;border-radius:14px;padding:14px;margin:10px 0;cursor:pointer}.pay-option:has(input:checked){border-color:#b79cff;background:#181324}.pay-option input{width:auto;margin-right:8px}.paybox{margin-top:13px;border:1px solid #453b56;border-radius:15px;padding:16px;background:#0a090e}.qris-wrapper{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}.qris{display:block;width:min(100%,300px);max-height:340px;object-fit:contain;background:white;border-radius:12px;padding:8px;margin:12px auto}.download-qris{display:inline-flex;padding:11px 16px;border-radius:999px;background:linear-gradient(135deg,#c9bbff,#7951db);color:#17121f;font-weight:800;font-size:12px}.qris-error{color:#ff9e9e;font-size:12px}.actions{display:flex;gap:10px;margin-top:16px}.actions button{flex:1;padding:12px;border-radius:11px;font-weight:800;cursor:pointer}.cancel{border:1px solid #36323f;background:#17151d;color:#fff}.confirm{border:0;background:linear-gradient(135deg,#c9bbff,#7951db);color:#17121f}.close{float:right;background:none;border:0;color:#aaa;font-size:22px;cursor:pointer}.result{margin-top:13px;padding:14px;border-radius:12px;background:#111820;color:#b8f3d2;font-size:12px}.invoice-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid #292532;font-size:12px}.invoice-row:last-child{border:0}.invoice-label{color:#9d99a7}.invoice-value{font-weight:800;text-align:right}.copy-order{display:inline-flex;margin-top:12px;margin-right:8px;min-width:210px;justify-content:center;background:linear-gradient(135deg,#c9bbff,#7951db);color:#17121f;border:0;padding:14px 18px;font-size:13px}.wa-btn{display:inline-flex;margin-top:12px;padding:13px 18px;border-radius:999px;background:#25d366;color:#06150d;font-weight:900}footer{border-top:1px solid #26252f;margin-top:20px;padding:28px 0 36px;color:#777;font-size:11px}.footerin{display:flex;justify-content:space-between;gap:20px;align-items:center}.footer-logo{height:40px;width:120px;object-fit:contain}@media(max-width:900px){.menus{display:none}.grid{grid-template-columns:repeat(2,1fr)}.payment,.features{grid-template-columns:1fr 1fr}.info-grid{grid-template-columns:1fr 1fr}}@media(max-width:560px){.shell{padding:0 14px}.navin{padding:0 14px}.logo{width:130px}.login{font-size:11px;padding:9px}.grid{padding:10px;gap:9px}.product{padding:13px}.payment,.features,.info-grid{grid-template-columns:1fr}.payment>div{border-right:0;border-bottom:1px solid #25242e}.footerin{flex-direction:column;align-items:flex-start}.input-group{flex-direction:column}.input-group select{flex:auto}.invoice-row{align-items:flex-start}.copy-order,.wa-btn{width:100%;justify-content:center;margin-right:0}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08080c">
+  <title>Solstice Store — Robux Store</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
+    :root {
+      --bg: #050507;
+      --panel: #0b0b10;
+      --line: #2a2935;
+      --text: #f8f7fb;
+      --muted: #a7a4b2;
+      --purple: #b79cff;
+      --purple-2: #8d74ff;
+      --ok: #7de3b0;
+      --shadow: rgba(183, 156, 255, 0.25);
+    }
+    * { box-sizing: border-box; scroll-behavior: smooth; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; }
+    body { min-height:100vh; }
+    a { color:inherit; text-decoration:none; }
+    img { max-width:100%; display:block; }
+    .shell { width:min(1100px, calc(100% - 32px)); margin:0 auto; }
+    .nav { position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background: rgba(5,5,7,.72); border-bottom:1px solid var(--line); }
+    .navin { width:min(1100px, calc(100% - 32px)); margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap:20px; padding:14px 0; }
+    .logo { width:54px; height:54px; border-radius:16px; object-fit:cover; }
+    .menus { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .menus a { color:var(--muted); font-size:14px; font-weight:600; padding:10px 12px; border-radius:10px; }
+    .menus a.active, .menus a:hover { color:var(--text); background:rgba(255,255,255,.04); }
+    .hero { background: radial-gradient(circle at top left, rgba(183,156,255,.24), transparent 35%), linear-gradient(180deg, rgba(9,10,16,1), rgba(5,5,7,1)); border-bottom:1px solid var(--line); }
+    .hero .shell { padding:72px 0 48px; }
+    .hero-content { max-width:760px; }
+    .eyebrow { letter-spacing:.18em; text-transform:uppercase; font-size:12px; font-weight:800; color:var(--purple); opacity:.92; }
+    .promo-banner {
+      display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:10px 16px; border-radius:999px;
+      background: rgba(183,156,255,.08); border:1px solid rgba(183,156,255,.5); color:#f4efff; font-size:13px; font-weight:700;
+      letter-spacing:.01em; box-shadow:0 12px 30px rgba(183,156,255,.18);
+    }
+    h1 { margin:20px 0 16px; font-size: clamp(2.8rem, 6vw, 6rem); line-height:.9; letter-spacing:-.06em; }
+    h1 span { color:var(--purple); }
+    .hero p { margin:0; color:var(--muted); max-width:600px; font-size:1.08rem; line-height:1.7; }
+    .cta-row { margin-top:26px; display:flex; gap:14px; flex-wrap:wrap; }
+    .cta { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 22px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.02); color:var(--text); font-weight:700; }
+    .cta.primary { background:linear-gradient(135deg, var(--purple), var(--purple-2)); color:#100d18; border:none; box-shadow:0 14px 40px rgba(183,156,255,.32); }
+    .trust-row { display:flex; flex-wrap:wrap; gap:18px; margin-top:30px; font-size:13px; color:var(--muted); }
+    .trust-row span { display:inline-flex; align-items:center; gap:8px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--ok); }
+    .section { padding: 54px 0; }
+    .panel { background:var(--panel); border:1px solid var(--line); border-radius:24px; padding:24px; box-shadow:0 18px 50px rgba(0,0,0,.25); }
+    .store-head { display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom:20px; }
+    .store-head b { font-size:1.5rem; letter-spacing:-.04em; }
+    .store-head small { color:var(--muted); }
+    #products { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
+    .product { position:relative; background: rgba(255,255,255,.02); border:1px solid var(--line); border-radius:18px; padding:18px; display:flex; flex-direction:column; gap:14px; }
+    .product.promo { border-color: rgba(183,156,255,.7); box-shadow: inset 0 0 0 1px rgba(183,156,255,.2); }
+    .robux-icon { width:44px; height:44px; border-radius:14px; background: linear-gradient(135deg, #1b1a25, #292738); border:1px solid var(--line); position:relative; }
+    .robux-icon:before, .robux-icon:after { content:""; position:absolute; inset:12px; border-radius:8px; border:2px solid var(--purple); transform:rotate(45deg); }
+    .product h4 { margin:0; font-size:1.2rem; }
+    .price { font-size:1.6rem; font-weight:900; letter-spacing:-.05em; }
+    .old { color:var(--muted); text-decoration:line-through; font-size:.95rem; }
+    .badge { position:absolute; top:16px; right:16px; background:var(--purple); color:#0e0d14; padding:6px 10px; border-radius:999px; font-size:11px; font-weight:900; }
+    .btn { display:inline-flex; align-items:center; justify-content:center; width:100%; border:none; background:linear-gradient(135deg, #e6d9ff, #b79cff); color:#0d0b14; font-weight:900; border-radius:12px; min-height:44px; cursor:pointer; }
+    .info-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:18px; }
+    .info { background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:18px; padding:20px; }
+    .info h3 { margin:0 0 12px; font-size:1.2rem; }
+    .info p, .info li { color:var(--muted); line-height:1.7; }
+    .info ul { margin:0; padding-left:18px; }
+    footer { border-top:1px solid var(--line); padding:24px 0 52px; }
+    .footerin { display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap; color:var(--muted); }
+    .footer-logo { width:54px; height:54px; border-radius:16px; }
+    .modal { position:fixed; inset:0; background: rgba(0,0,0,.7); display:none; align-items:center; justify-content:center; padding:24px; z-index:20; }
+    .modal.show { display:flex; }
+    .modalbox { width:min(560px, 100%); background:#0d0d13; border:1px solid var(--line); border-radius:22px; padding:24px; position:relative; }
+    .close { position:absolute; right:16px; top:12px; border:none; background:rgba(255,255,255,.06); color:var(--text); width:34px; height:34px; border-radius:10px; font-size:20px; cursor:pointer; }
+    .muted { color:var(--muted); }
+    .steps { display:grid; gap:10px; margin:18px 0; }
+    .step { display:none; }
+    .step.active { display:block; }
+    .stepbar { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:18px 0 14px; }
+    .stepbar span { height:8px; background:rgba(255,255,255,.06); border-radius:999px; }
+    .stepbar span.active { background:linear-gradient(135deg, var(--purple), var(--purple-2)); }
+    .field { display:grid; gap:8px; margin-bottom:16px; }
+    label { font-weight:700; font-size:14px; }
+    input, select { width:100%; min-height:46px; background:#121219; border:1px solid var(--line); border-radius:12px; padding:0 14px; color:var(--text); font:inherit; }
+    .action-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+    .action-row button { flex:1; min-height:46px; border-radius:12px; border:none; cursor:pointer; font-weight:800; }
+    .ghost { background:rgba(255,255,255,.04); color:var(--text); border:1px solid var(--line); }
+    .primary { background:linear-gradient(135deg, var(--purple), var(--purple-2)); color:#0c0b12; }
+    .payment-grid { display:grid; gap:12px; margin:18px 0; }
+    .payment-option { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; padding:12px 14px; }
+    .payment-option input { width:auto; }
+    #paymentBox { margin-top:18px; }
+    .qris-wrapper { border:1px solid var(--line); border-radius:18px; padding:18px; background:rgba(255,255,255,.02); text-align:center; }
+    .qris-wrapper img { width:min(220px, 80%); margin:14px auto 0; border-radius:16px; }
+    .summary-box { background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:14px; padding:14px; margin-top:12px; }
+    .sr { display:none; }
+    @media (max-width: 640px) {
+      .navin { padding:12px 0; }
+      .menus { gap:8px; }
+      .menus a { font-size:12px; padding:8px 10px; }
+      .hero .shell { padding-top:52px; }
+      .store-head { align-items:flex-start; flex-direction:column; }
+    }
+  </style>
 </head>
 <body>
-<header class="nav"><div class="navin"><img class="logo" src="assets/solstice-logo.png" alt="Solstice Store"><nav class="menus"><a class="active" href="#home">⌂ &nbsp; Home</a><a href="#store">🛒 &nbsp; Store</a><a href="#about">ⓘ &nbsp; About</a><a href="#faq">? &nbsp; FAQ</a></nav><a class="login" href="https://www.roblox.com/" target="_blank" rel="noopener">▣ &nbsp; Login Roblox →</a></div></header>
-<main id="home"><section class="hero"><div class="shell"><div class="hero-content"><div class="eyebrow">FAST &nbsp;·&nbsp; SAFE &nbsp;·&nbsp; TRUSTED</div><h1>SOLSTICE <span>STORE</span></h1><p><b>Top Up Robux dengan mudah, cepat dan aman!</b><br>Solstice Store hadir untuk memenuhi kebutuhan Robux kamu dengan harga yang transparan dan proses yang simpel.</p><a class="cta" href="#store">Mulai Top Up &nbsp;→</a><div class="mini"><span class="pill">Via Username</span><span class="pill">SeaBank / QRIS</span><span class="pill">Manual Verification</span></div></div></div></section>
-<section id="store" class="section"><div class="shell"><div class="panel"><div class="store-head"><div><b>PILIH PAKET ROBUX</b><br><small>Harga sudah termasuk biaya admin. Proses setelah pembayaran dikonfirmasi.</small></div><div class="method">⚡ SeaBank / QRIS</div></div><div class="grid" id="products"></div><div class="payment"><div><h3>💳 METODE PEMBAYARAN</h3><p>SeaBank atau QRIS GoPay Merchant tersedia saat checkout.</p><div class="account">SeaBank</div><p>901004935916<br><b>a.n. Muhammad Abdul Aziz</b></p></div><div><h3>📋 CARA PEMBAYARAN</h3><ol><li>Pilih paket Robux.</li><li>Isi username dan kontak.</li><li>Pilih metode pembayaran.</li><li>Bayar sesuai total.</li><li>Salin invoice lalu chat WhatsApp admin.</li></ol></div><div><h3>✅ KONFIRMASI</h3><p>Order dikirim ke Discord setelah customer menekan Selesai. Pembayaran tetap diverifikasi manual.</p><button class="buy" onclick="document.querySelector('#products').scrollIntoView({behavior:'smooth'})">Pilih Paket →</button></div></div></div><div class="features"><div class="feature"><div>🛡️</div><b>100% Aman</b><span>Data pembayaran diverifikasi manual.</span></div><div class="feature"><div>⚡</div><b>Proses Cepat</b><span>Order langsung dikirim ke admin.</span></div><div class="feature"><div>★</div><b>Harga Transparan</b><span>Total terlihat sebelum pembayaran.</span></div><div class="feature"><div>◉</div><b>Support</b><span>Simpan nomor invoice.</span></div></div></div></section>
-<section id="about" class="section"><div class="shell"><div class="info-grid"><div class="info"><h3>Solstice Store</h3><p>Storefront pemesanan paket Robux berbasis username.</p></div><div class="info"><h3>Privasi</h3><p>Kami tidak meminta password Roblox, cookie, PIN, atau OTP.</p></div><div class="info"><h3>Invoice</h3><p>No. Pesanan dikirim ke admin untuk pencocokan manual.</p></div></div></div></section><section id="faq" class="section"><div class="shell"><div class="info-grid"><div class="info"><h3>Bagaimana cara membeli?</h3><p>Pilih paket → isi data → pilih pembayaran → bayar → selesai.</p></div><div class="info"><h3>Perlu password Roblox?</h3><p>Tidak. Cukup username Roblox.</p></div><div class="info"><h3>Pembayaran otomatis?</h3><p>Tidak. Admin mencocokkan pembayaran manual.</p></div></div></div></section></main>
-<footer><div class="shell footerin"><div><img class="footer-logo" src="assets/solstice-logo.png" alt=""><div>© 2026 Solstice Store. All rights reserved.</div></div><div>WhatsApp Admin: 085780024940</div></div></footer>
-<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">×</button><h2>Checkout</h2><div class="muted">Ikuti langkah berikut sampai selesai.</div><div class="stepbar"><span id="bar1" class="active">1. Data</span><span id="bar2">2. Pembayaran</span><span id="bar3">3. Selesai</span></div><section class="step active" id="step1"><div class="summary" id="summary"></div><label class="label">Username Roblox</label><input id="username" maxlength="30" placeholder="Contoh: ZeePlayer123"><label class="label">Kontak Anda</label><div class="input-group"><select id="contactMethod"><option value="WhatsApp">WhatsApp</option><option value="Discord">Discord</option></select><input id="contact" maxlength="80" placeholder="Nomor WhatsApp atau username Discord"></div><div class="actions"><button class="cancel" onclick="closeModal()">Batal</button><button class="confirm" onclick="goPayment()">Lanjut ke pembayaran →</button></div></section><section class="step" id="step2"><div class="summary" id="paymentSummary"></div><label class="pay-option"><input type="radio" name="payment" value="SeaBank"> SeaBank</label><label class="pay-option"><input type="radio" name="payment" value="QRIS GoPay Merchant"> QRIS GoPay Merchant</label><div id="paymentBox" class="paybox muted">Pilih metode pembayaran.</div><div class="actions"><button class="cancel" onclick="showStep(1)">← Kembali</button><button class="confirm" onclick="goPay()">Lanjut ke bayar →</button></div></section><section class="step" id="step3"><div class="summary" id="finishSummary"></div><div class="muted">Setelah membayar, tekan Selesai. Tombol ini mengirim laporan ke admin dan bukan bukti pembayaran otomatis.</div><div class="actions"><button class="cancel" onclick="showStep(2)">← Kembali</button><button class="confirm" id="finish" onclick="submitOrder()">Selesai & kirim order</button></div></section><div class="result" id="result"></div></div></div>
-<script>
-const API_URL="/api/order",WHATSAPP_NUMBER="6285780024940";
-const QRIS_IMAGE="assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png";
-const products=[["50 Robux",8000],["100 Robux",16000],["200 Robux",32000],["300 Robux",48000],["500 Robux",65000,80000],["1.000 Robux",130000,160000],["1.500 Robux",240000],["2.000 Robux",320000],["3.000 Robux",480000],["4.000 Robux",640000],["5.000 Robux",800000],["6.000 Robux",960000],["7.000 Robux",1120000],["8.000 Robux",1280000],["9.000 Robux",1440000],["10.000 Robux",1600000]];
-const rp=n=>new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",maximumFractionDigits:0}).format(n);let selected=null,orderId=null,paymentMethod=null;
-products.forEach((p,i)=>document.querySelector("#products").insertAdjacentHTML("beforeend",`<article class="product ${p[2]?"promo":""}"><div class="robux-icon"></div>${p[2]?'<span class="badge">PROMO</span>':''}<h3>${p[0].replace(" Robux","")} <span class="unit">ROBUX</span></h3><div class="price">${p[2]?`<span class="old">${rp(p[2])}</span>`:""}${rp(p[1])}</div><button class="buy" onclick="openModal(${i})">Beli Sekarang →</button></article>`));
-function makeOrderId(){return "SOL-"+Date.now().toString(36).toUpperCase()}
-function openModal(i){selected=products[i];orderId=makeOrderId();paymentMethod=null;document.querySelector("#summary").innerHTML=`<b>${selected[0]}</b><br>Total: <b>${rp(selected[1])}</b><br>No. Pesanan / Invoice: <b>${orderId}</b>`;document.querySelector("#username").value="";document.querySelector("#contact").value="";document.querySelectorAll('input[name="payment"]').forEach(x=>x.checked=false);document.querySelector("#result").innerHTML="";document.querySelector("#paymentBox").innerHTML="Pilih metode pembayaran.";showStep(1);document.querySelector("#modal").classList.add("show")}
-function closeModal(){document.querySelector("#modal").classList.remove("show")}
-function showStep(n){document.querySelectorAll(".step").forEach(x=>x.classList.remove("active"));document.querySelector("#step"+n).classList.add("active");document.querySelectorAll(".stepbar span").forEach((x,i)=>x.classList.toggle("active",i<n))}
-function validData(){const u=document.querySelector("#username").value.trim(),m=document.querySelector("#contactMethod").value,c=document.querySelector("#contact").value.trim();if(!/^[A-Za-z0-9_]{3,30}$/.test(u))return alert("Masukkan username Roblox yang valid.");if(m==="WhatsApp"&&!/^[0-9+ ()-]{7,25}$/.test(c))return alert("Masukkan nomor WhatsApp yang valid.");if(m==="Discord"&&!/^[A-Za-z0-9_.-]{2,40}(#[0-9]{4})?$/.test(c))return alert("Masukkan username Discord yang valid.");return true}
-function goPayment(){if(!validData())return;document.querySelector("#paymentSummary").innerHTML=`<b>${selected[0]}</b> · ${rp(selected[1])}<br>Invoice: <b>${orderId}</b>`;showStep(2)}
-function renderQris(){const box=document.querySelector("#paymentBox");box.innerHTML=`<div class="qris-wrapper"><p>Scan QRIS berikut lalu bayar sesuai total <strong>${rp(selected[1])}</strong>.</p><img class="qris" src="${QRIS_IMAGE}" alt="QRIS GoPay Merchant"><a class="download-qris" href="${QRIS_IMAGE}" download="qris-solstice-store.png">⬇ Unduh QRIS</a></div>`;}
-document.querySelectorAll('input[name="payment"]').forEach((input)=>{input.addEventListener("change",()=>{paymentMethod=input.value;if(paymentMethod==="SeaBank"){document.querySelector("#paymentBox").innerHTML=`<b>SeaBank</b><br><strong class="account">901004935916</strong><br>a.n. Muhammad Abdul Aziz<br><button class="copy" onclick="copyAccount()">Salin nomor rekening</button>`;}else{renderQris();}});});
-function goPay(){if(!paymentMethod)return alert("Pilih metode pembayaran terlebih dahulu.");document.querySelector("#finishSummary").innerHTML=`<b>${selected[0]}</b> · ${rp(selected[1])}<br>Metode: <b>${paymentMethod}</b><br>Invoice: <b>${orderId}</b>`;showStep(3)}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function submitOrder(){if(!validData())return;const username=document.querySelector("#username").value.trim(),method=document.querySelector("#contactMethod").value,contact=document.querySelector("#contact").value.trim(),btn=document.querySelector("#finish");btn.disabled=true;btn.textContent="Mengirim...";try{const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orderId,username,product:selected[0],amount:selected[1],paymentMethod,contactMethod:method,contact})}),d=await r.json();if(!r.ok)throw new Error(d.message||"Gagal mengirim order");const wa=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Halo admin, saya ingin konfirmasi order ${orderId}. Saya sudah membayar via ${paymentMethod}.`)}`;document.querySelector("#result").innerHTML=`<strong>✅ Order terkirim. Menunggu verifikasi admin.</strong><div class="invoice"><div class="invoice-row"><span class="invoice-label">No. Pesanan / Invoice</span><span class="invoice-value">${orderId}</span></div><div class="invoice-row"><span class="invoice-label">Username Roblox</span><span class="invoice-value">${esc(username)}</span></div><div class="invoice-row"><span class="invoice-label">Produk</span><span class="invoice-value">${esc(selected[0])}</span></div><div class="invoice-row"><span class="invoice-label">Total</span><span class="invoice-value">${rp(selected[1])}</span></div><div class="invoice-row"><span class="invoice-label">Pembayaran</span><span class="invoice-value">${esc(paymentMethod)}</span></div></div><button class="copy-order" onclick="copyOrderId()">📋 Salin kode invoice</button><a class="wa-btn" href="${wa}" target="_blank" rel="noopener">💬 Chat WhatsApp Admin</a>`;document.querySelector("#result").scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){alert("Order belum terkirim: "+e.message);btn.disabled=false;btn.textContent="Selesai & kirim order"}}
-function copyOrderId(){navigator.clipboard?.writeText(orderId).then(()=>alert("Kode invoice berhasil disalin: "+orderId)).catch(()=>alert(orderId))}async function copyAccount(){try{await navigator.clipboard.writeText("901004935916");alert("Nomor rekening berhasil disalin.")}catch(e){alert("901004935916")}}
-</script>
+  <header class="nav">
+    <div class="navin">
+      <img class="logo" src="assets/solstice-logo.png" alt="Solstice Store">
+      <nav class="menus">
+        <a class="active" href="#home">⌂ &nbsp; Home</a>
+        <a href="#store">🛒 &nbsp; Store</a>
+        <a href="#about">ℹ️ &nbsp; About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="shell">
+        <div class="hero-content">
+          <div class="eyebrow">FAST &nbsp;·&nbsp; SAFE &nbsp;·&nbsp; TRUSTED</div>
+          <div class="promo-banner">🔥 Promo spesial: Harga mulai dari Rp 8.000, berlaku sampai 27 September 2026</div>
+          <h1>SOLSTICE <span>STORE</span></h1>
+          <p>Beli paket Robux favoritmu dengan proses cepat, aman, dan harga terjangkau. Semua transaksi diproses langsung oleh admin dengan layanan yang ramah.</p>
+          <div class="cta-row">
+            <a class="cta primary" href="#store">Lihat Paket</a>
+            <a class="cta" href="#about">Cara Order</a>
+          </div>
+          <div class="trust-row">
+            <span><i class="dot"></i> 100% aman</span>
+            <span><i class="dot"></i> Proses cepat</span>
+            <span><i class="dot"></i> Support 24 jam</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="store" class="section">
+      <div class="shell">
+        <div class="panel">
+          <div class="store-head">
+            <div>
+              <b>PILIH PAKET ROBUX</b><br>
+              <small>Harga sudah termasuk biaya admin. Proses setelah pembayaran dilakukan.</small>
+            </div>
+          </div>
+          <div id="products"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="shell">
+        <div class="info-grid">
+          <div class="info">
+            <h3>Solstice Store</h3>
+            <p>Storefront pemesanan paket Robux berbasis username. Cocok untuk kamu yang ingin beli Robux dengan proses yang jelas dan cepat.</p>
+          </div>
+          <div class="info">
+            <h3>Cara order</h3>
+            <ul>
+              <li>Pilih paket Robux yang diinginkan.</li>
+              <li>Isi username Roblox dan kontak yang aktif.</li>
+              <li>Pilih metode pembayaran dan lakukan transfer.</li>
+              <li>Konfirmasi ke admin setelah pembayaran berhasil.</li>
+            </ul>
+          </div>
+          <div class="info">
+            <h3>Keunggulan</h3>
+            <p>Harga kompetitif, proses cepat, dan dukungan respon admin yang siap membantu setiap kebutuhan pembelian. </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footerin">
+      <div>
+        <img class="footer-logo" src="assets/solstice-logo.png" alt="">
+        <div>© 2026 Solstice Store. All rights reserved.</div>
+      </div>
+      <div>WhatsApp Admin: 085780024940</div>
+    </div>
+  </footer>
+
+  <div class="modal" id="modal">
+    <div class="modalbox">
+      <button class="close" onclick="closeModal()">×</button>
+      <h2>Checkout</h2>
+      <div class="muted">Ikuti langkah berikut sampai selesai.</div>
+
+      <div class="stepbar">
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="steps">
+        <div class="step active" id="step1">
+          <div class="field">
+            <label for="username">Username Roblox</label>
+            <input id="username" placeholder="Contoh: azizdenaa">
+          </div>
+          <div class="field">
+            <label for="contactMethod">Metode kontak</label>
+            <select id="contactMethod">
+              <option value="">Pilih kontak</option>
+              <option value="WhatsApp">WhatsApp</option>
+              <option value="Discord">Discord</option>
+              <option value="Telegram">Telegram</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="contact">Nomor / ID kontak</label>
+            <input id="contact" placeholder="Contoh: 0857xxxxxx">
+          </div>
+          <div class="summary-box" id="summary"></div>
+          <div class="action-row">
+            <button class="primary" onclick="goPayment()">Lanjutkan</button>
+          </div>
+        </div>
+
+        <div class="step" id="step2">
+          <div class="summary-box" id="paymentSummary"></div>
+          <div class="field">
+            <label>Pilih metode pembayaran</label>
+            <div class="payment-grid">
+              <label class="payment-option"><input type="radio" name="payment" value="QRIS"> QRIS</label>
+              <label class="payment-option"><input type="radio" name="payment" value="SeaBank"> SeaBank</label>
+              <label class="payment-option"><input type="radio" name="payment" value="BCA"> BCA</label>
+            </div>
+          </div>
+          <div id="paymentBox"></div>
+          <div class="action-row">
+            <button class="ghost" onclick="showStep(1)">Kembali</button>
+            <button class="primary" onclick="goPay()">Lanjutkan</button>
+          </div>
+        </div>
+
+        <div class="step" id="step3">
+          <div class="summary-box" id="finishSummary"></div>
+          <div class="muted">Silakan kirim bukti pembayaran ke admin agar pesanan diproses.</div>
+          <div class="action-row">
+            <button class="ghost" onclick="showStep(2)">Kembali</button>
+            <button class="primary" onclick="submitOrder()">Konfirmasi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "/api/order";
+    const WHATSAPP_NUMBER = "6285780024940";
+    const QRIS_IMAGE = "assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png";
+    const products = [
+      ["50 Robux", 8000],
+      ["100 Robux", 16000],
+      ["200 Robux", 32000],
+      ["300 Robux", 48000],
+      ["500 Robux", 65000],
+      ["1.000 Robux", 130000],
+      ["1.500 Robux", 240000],
+      ["2.000 Robux", 320000]
+    ];
+
+    const rp = n => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+    let selected = null, orderId = null, paymentMethod = null;
+
+    products.forEach((p, i) => {
+      document.querySelector("#products").insertAdjacentHTML("beforeend", `
+        <article class="product ${i % 2 === 0 ? "promo" : ""}">
+          <span class="badge">Promo</span>
+          <div class="robux-icon"></div>
+          <h4>${p[0]}</h4>
+          <div class="price">${rp(p[1])}</div>
+          <button class="btn" onclick="openModal(${i})">Pilih Paket</button>
+        </article>
+      `);
+    });
+
+    function makeOrderId() {
+      return "SOL-" + Date.now().toString(36).toUpperCase();
+    }
+
+    function openModal(i) {
+      selected = products[i];
+      orderId = makeOrderId();
+      paymentMethod = null;
+      document.querySelector("#summary").innerHTML = `<b>${selected[0]}</b><br>Total: <b>${rp(selected[1])}</b><br>No. Invoice: <b>${orderId}</b>`;
+      document.querySelector("#modal").classList.add("show");
+      showStep(1);
+      document.querySelectorAll('input[name="payment"]').forEach((input) => input.checked = false);
+      document.querySelector("#paymentBox").innerHTML = "";
+    }
+
+    function closeModal() {
+      document.querySelector("#modal").classList.remove("show");
+    }
+
+    function showStep(n) {
+      document.querySelectorAll(".step").forEach(x => x.classList.remove("active"));
+      document.querySelector("#step" + n).classList.add("active");
+      document.querySelectorAll(".stepbar span").forEach((x, i) => x.classList.toggle("active", i < n));
+    }
+
+    function validData() {
+      const u = document.querySelector("#username").value.trim();
+      const m = document.querySelector("#contactMethod").value;
+      const c = document.querySelector("#contact").value.trim();
+      if (!u || !m || !c) return false;
+      return true;
+    }
+
+    function goPayment() {
+      if (!validData()) return alert("Isi username, metode kontak, dan kontak terlebih dahulu.");
+      document.querySelector("#paymentSummary").innerHTML = `<b>${selected[0]}</b> · ${rp(selected[1])}<br>Invoice: <b>${orderId}</b>`;
+      showStep(2);
+      renderQris();
+    }
+
+    function renderQris() {
+      const box = document.querySelector("#paymentBox");
+      box.innerHTML = `<div class="qris-wrapper"><p>Scan QRIS berikut lalu bayar sesuai total <strong>${rp(selected[1])}</strong>.</p><img src="${QRIS_IMAGE}" alt="QRIS payment"><div class="muted">Metode pembayaran aktif: ${paymentMethod || "QRIS"}</div></div>`;
+    }
+
+    document.querySelectorAll('input[name="payment"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        paymentMethod = input.value;
+        renderQris();
+      });
+    });
+
+    function goPay() {
+      if (!paymentMethod) return alert("Pilih metode pembayaran terlebih dahulu.");
+      document.querySelector("#finishSummary").innerHTML = `<b>${selected[0]}</b> · ${rp(selected[1])}<br>Metode: <b>${paymentMethod}</b><br>Invoice: <b>${orderId}</b>`;
+      showStep(3);
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    async function submitOrder() {
+      if (!validData()) return;
+      const username = document.querySelector("#username").value.trim();
+      const method = document.querySelector("#contactMethod").value;
+      const contact = document.querySelector("#contact").value.trim();
+      const payload = { username, method, contact, product: selected[0], total: selected[1], orderId, paymentMethod };
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error("Gagal membuat order");
+        alert("Order berhasil dibuat. Admin akan segera menghubungi Anda.");
+        closeModal();
+      } catch (error) {
+        alert("Gagal membuat order. Silakan hubungi admin secara manual.");
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Halo admin, saya ingin konfirmasi order ${orderId}`)}`, "_blank");
+      }
+    }
+
+    function copyOrderId() {
+      navigator.clipboard?.writeText(orderId).then(() => alert("Kode invoice berhasil disalin: " + orderId)).catch(() => alert(orderId));
+    }
+
+    async function copyAccount() {
+      try { await navigator.clipboard.writeText("1234567890"); alert("Nomor rekening berhasil disalin."); } catch { alert("1234567890"); }
+    }
+  </script>
 </body>
 </html>
