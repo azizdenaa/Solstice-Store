@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#08080d">
+<title>Solstice Store — Robux Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg:#08080d;--panel:#11121b;--card:#171925;--card2:#0e0f16;
+  --line:#292b39;--line2:rgba(255,255,255,.08);
+  --text:#f8f7fb;--muted:#a9a7b6;--purple:#b79cff;--purple2:#8d74ff;
+  --green:#7de3b0;--gold:#f7dc7d;--danger:#ff8f9a;
+}
+*{box-sizing:border-box;scroll-behavior:smooth}
+body{
+  margin:0;background:
+  radial-gradient(circle at 50% -12%,#27223f 0,#10101a 34%,var(--bg) 72%);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;
+}
+body.modal-open{overflow:hidden}
+img{display:block;max-width:100%}a{text-decoration:none;color:inherit}
+button,input{font:inherit}.shell{width:min(1120px,calc(100% - 32px));margin:auto}
+
+.nav{position:sticky;top:0;z-index:20;background:rgba(8,8,13,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+.navin{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:15px 0}
+.logo{width:184px;filter:drop-shadow(0 8px 18px rgba(183,156,255,.2))}
+.menus{display:flex;gap:7px;flex-wrap:wrap}.menus a{padding:10px 14px;border:1px solid transparent;border-radius:999px;color:var(--muted);font-weight:700}
+.menus a:hover,.menus a.active{color:var(--text);background:rgba(183,156,255,.1);border-color:rgba(183,156,255,.22)}
+
+.hero{padding:70px 0 38px}.eyebrow,.section-kicker{color:var(--purple);font-size:12px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
+.promo-banner{display:inline-flex;margin-top:18px;padding:9px 14px;border:1px solid rgba(125,227,176,.25);border-radius:999px;background:rgba(125,227,176,.08);color:var(--green);font-size:13px;font-weight:800}
+.hero h1{margin:24px 0 14px;font-size:clamp(3rem,8vw,6rem);line-height:.88;letter-spacing:-.07em}
+.hero h1 span{display:block;color:var(--purple)}.hero p{max-width:690px;margin:0;color:var(--muted);font-size:1.05rem;line-height:1.7}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}.cta{display:inline-flex;justify-content:center;padding:13px 20px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.03);font-weight:800}
+.cta.primary{border-color:transparent;background:linear-gradient(135deg,var(--purple2),var(--purple));color:#120f18;box-shadow:0 14px 28px rgba(141,116,255,.24)}
+.trust-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.trust-row span{padding:9px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px;font-weight:700}
+.dot{display:inline-block;width:8px;height:8px;margin-right:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(125,227,176,.12)}
+
+.section{padding:28px 0 14px}.store-panel{padding:28px;border:1px solid var(--line);border-radius:28px;background:rgba(18,19,29,.9);box-shadow:0 22px 55px rgba(0,0,0,.2)}
+.store-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.store-head h2{margin:8px 0;font-size:clamp(1.7rem,3vw,2.35rem)}.store-head p{margin:0;color:var(--muted)}
+.store-note{padding:9px 13px;border:1px solid rgba(125,227,176,.2);border-radius:999px;color:var(--green);font-size:13px;font-weight:800}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.product{display:flex;min-height:274px;flex-direction:column;justify-content:space-between;padding:20px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.012));transition:.2s}
+.product:hover{transform:translateY(-4px);border-color:rgba(183,156,255,.55);box-shadow:0 16px 30px rgba(0,0,0,.24)}
+.product.featured{border-color:rgba(247,220,125,.55);background:linear-gradient(160deg,rgba(247,220,125,.11),rgba(255,255,255,.015))}
+.badge{display:inline-flex;padding:5px 9px;border:1px solid rgba(255,255,255,.12);border-radius:999px;color:var(--muted);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.product h3{margin:20px 0 8px;font-size:1.45rem;letter-spacing:-.04em}.product .price{font-size:1.55rem;font-weight:900;letter-spacing:-.05em}
+.product .meta{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.55}
+.buy{width:100%;margin-top:20px;padding:12px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--purple2),var(--purple));color:#120f18;font-weight:900;cursor:pointer}.buy:hover{filter:brightness(1.08)}
+
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.info{padding:22px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.025)}
+.info h3{margin-top:0}.info p,.info li{color:var(--muted);line-height:1.7}
+.footerin{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:32px 0 42px;color:var(--muted)}
+.footer-logo{width:130px;margin-bottom:10px}
+
+.modal{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(3,3,7,.8);backdrop-filter:blur(10px)}
+.modal.show{display:flex}.modalbox{position:relative;width:min(620px,100%);max-height:calc(100vh - 28px);overflow:auto;padding:28px;border:1px solid rgba(183,156,255,.22);border-radius:26px;background:linear-gradient(180deg,#171925,#0e0f16);box-shadow:0 25px 70px rgba(0,0,0,.55)}
+.close{position:absolute;top:14px;right:14px;width:38px;height:38px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.04);color:var(--text);font-size:22px;cursor:pointer}
+.checkout-head{padding-right:48px;margin-bottom:22px}.checkout-head h2{margin:0 0 7px;font-size:1.7rem}.muted{color:var(--muted);font-size:13px;line-height:1.6}
+.progress{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:20px 0 4px}.progress-item{height:4px;border-radius:99px;background:#292b39}.progress-item.active{background:var(--purple)}
+.checkout-section{padding-top:21px;margin-top:21px;border-top:1px solid rgba(255,255,255,.08)}
+.step-title{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--purple);font-weight:900}
+.step-number{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:rgba(183,156,255,.15);color:var(--purple);font-size:12px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}.field label{font-size:13px;font-weight:800}
+.field input{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;background:#0b0c12;color:var(--text);outline:0}
+.field input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(183,156,255,.12)}
+.field input.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(255,143,154,.08)}
+.field-hint{color:var(--muted);font-size:11px;margin-top:-2px}.error{min-height:15px;color:var(--danger);font-size:11px;font-weight:700}
+
+.contact-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.contact-option{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);cursor:pointer;text-align:left}
+.contact-option input{accent-color:var(--purple);width:17px;height:17px}.contact-option:has(input:checked){border-color:var(--purple);background:rgba(183,156,255,.09)}
+.contact-option strong{display:block}.contact-option small{display:block;margin-top:3px;color:var(--muted)}
+
+.summary-box{padding:15px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+.summary-row{display:flex;justify-content:space-between;gap:15px;padding:9px 0;color:var(--muted);font-size:13px}.summary-row+.summary-row{border-top:1px solid rgba(255,255,255,.07)}
+.summary-row strong{color:var(--text);text-align:right}.summary-row.total strong{color:var(--green);font-size:1.15rem}
+
+.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.payment-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);color:var(--text);text-align:left;cursor:pointer}
+.payment-card:hover,.payment-card.selected{border-color:var(--purple);background:rgba(183,156,255,.1)}.payment-icon{font-size:1.5rem}
+.payment-card strong{display:block}.payment-card small{display:block;margin-top:3px;color:var(--muted)}
+.payment-card.selected:after{content:'✓';margin-left:auto;color:var(--green);font-weight:900}
+.payment-details{display:none;margin-top:14px;padding:14px;border:1px dashed rgba(183,156,255,.4);border-radius:13px;background:rgba(183,156,255,.05)}
+.payment-details.show{display:block}.payment-details img{width:180px;margin:10px auto 0;border-radius:12px}.payment-details strong{color:var(--gold)}
+
+.order-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.submit-btn,.cancel-btn{width:100%;padding:14px;border-radius:12px;font-weight:900;cursor:pointer}
+.submit-btn{border:0;background:linear-gradient(135deg,var(--green),#54cd95);color:#07120c}.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.cancel-btn{border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
+.status{display:none;margin-top:12px;padding:11px 13px;border-radius:11px;font-size:12px;font-weight:700}.status.show{display:block}
+.status.error{background:rgba(255,143,154,.08);border:1px solid rgba(255,143,154,.2);color:#ffb1b9}
+.status.success{background:rgba(125,227,176,.08);border:1px solid rgba(125,227,176,.2);color:var(--green)}
+.hidden{display:none!important}
+
+@media(max-width:900px){.products{grid-template-columns:repeat(2,minmax(0,1fr))}.info-grid{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .navin{flex-direction:column;gap:12px}.logo{width:155px}.hero{padding-top:45px}.products{grid-template-columns:1fr}
+  .store-panel{padding:20px}.modal{padding:10px}.modalbox{padding:21px;border-radius:21px;max-height:calc(100vh - 20px)}
+  .payment-options,.contact-options,.order-actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="shell navin">
+    <a href="#home"><img class="logo" src="/assets/solstice-logo.png" alt="Solstice Store"></a>
+    <nav class="menus">
+      <a class="active" href="#home">⌂ Home</a>
+      <a href="#store">🛒 Store</a>
+      <a href="#about">ℹ About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="home">
+<section class="hero">
+  <div class="shell">
+    <div class="eyebrow">FAST · SAFE · TRUSTED</div>
+    <div class="promo-banner">Promo spesial: Harga Robux kini jauh lebih terjangkau hingga 27 September 2026</div>
+    <h1>SOLSTICE <span>STORE</span></h1>
+    <p>Temukan paket Robux dengan harga transparan dan proses pemesanan yang cepat. Pilih paket, isi data, pilih kontak, lalu lakukan pembayaran dengan aman.</p>
+    <div class="cta-row">
+      <a class="cta primary" href="#store">Lihat Paket Robux</a>
+      <a class="cta" href="#about">Cara Order</a>
+    </div>
+    <div class="trust-row">
+      <span><i class="dot"></i>Harga transparan</span>
+      <span><i class="dot"></i>Proses cepat</span>
+      <span><i class="dot"></i>Admin terpercaya</span>
+    </div>
+  </div>
+</section>
+
+<section id="store" class="section">
+  <div class="shell">
+    <div class="store-panel">
+      <div class="store-head">
+        <div>
+          <div class="section-kicker">Robux Store</div>
+          <h2>Pilih paket yang kamu butuhkan</h2>
+          <p>Harga sudah termasuk biaya admin dan siap diproses setelah pembayaran.</p>
+        </div>
+        <div class="store-note">● Stok layanan tersedia</div>
+      </div>
+      <div class="products" id="products"></div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="shell">
+    <div class="info-grid">
+      <div class="info"><h3>Solstice Store</h3><p>Storefront pemesanan paket Robux berbasis username dengan proses yang jelas, aman, dan mudah diikuti.</p></div>
+      <div class="info"><h3>Cara order</h3><ul><li>Pilih paket Robux.</li><li>Isi username Roblox.</li><li>Pilih WhatsApp atau Discord.</li><li>Pilih SeaBank atau QRIS.</li><li>Konfirmasi pesanan.</li></ul></div>
+      <div class="info"><h3>Perlu bantuan?</h3><p>Hubungi admin melalui WhatsApp atau Discord yang dipilih saat checkout. Pesanan akan diverifikasi secara manual.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="shell footerin">
+    <div><img class="footer-logo" src="/assets/solstice-logo.png" alt="Solstice Store"><div>© 2026 Solstice Store. All rights reserved.</div></div>
+    <div>WhatsApp Admin: 085780024940</div>
+  </div>
+</footer>
+
+<!-- CHECKOUT -->
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+    <button class="close" id="closeBtn" type="button" aria-label="Tutup">×</button>
+
+    <div class="checkout-head">
+      <h2 id="checkoutTitle">Checkout Pesanan</h2>
+      <div class="muted">Ikuti 3 langkah berikut. Data kontak wajib sesuai metode yang kamu pilih.</div>
+      <div class="progress" aria-hidden="true">
+        <span class="progress-item active"></span><span class="progress-item active"></span><span class="progress-item active"></span>
+      </div>
+    </div>
+
+    <section class="checkout-section" style="padding-top:0;margin-top:0;border-top:0">
+      <h3 class="step-title"><span class="step-number">1</span>Data pemesan</h3>
+
+      <div class="field">
+        <label for="username">Username Roblox</label>
+        <input id="username" maxlength="30" placeholder="Contoh: ZeeDeveloper" autocomplete="off" spellcheck="false">
+        <div class="field-hint">Masukkan username Roblox, bukan display name.</div>
+        <div class="error" id="usernameError"></div>
+      </div>
+
+      <div class="field">
+        <label>Metode kontak</label>
+        <div class="contact-options">
+          <label class="contact-option">
+            <input type="radio" name="contactMethod" value="WhatsApp">
+            <span><strong>WhatsApp</strong><small>Nomor WhatsApp aktif</small></span>
+          </label>
+          <label class="contact-option">
+            <input type="radio" name="contactMethod" value="Discord">
+            <span><strong>Discord</strong><small>Username Discord</small></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field hidden" id="whatsappField">
+        <label for="whatsapp">Nomor WhatsApp</label>
+        <input id="whatsapp" inputmode="tel" maxlength="16" placeholder="Contoh: 0857xxxxxxxx" autocomplete="tel">
+        <div class="field-hint">Nomor ini digunakan admin untuk menghubungi kamu.</div>
+        <div class="error" id="whatsappError"></div>
+      </div>
+
+      <div class="field hidden" id="discordField">
+        <label for="discord">Username Discord</label>
+        <input id="discord" maxlength="40" placeholder="Contoh: zee.dev" autocomplete="off" spellcheck="false">
+        <div class="field-hint">Masukkan username Discord kamu.</div>
+        <div class="error" id="discordError"></div>
+      </div>
+    </section>
+
+    <section class="checkout-section">
+      <h3 class="step-title"><span class="step-number">2</span>Ringkasan pesanan</h3>
+      <div class="summary-box">
+        <div class="summary-row"><span>Produk</span><strong id="summary">-</strong></div>
+        <div class="summary-row"><span>Order ID</span><strong id="orderId">-</strong></div>
+        <div class="summary-row"><span>Kontak</span><strong id="contactSummary">-</strong></div>
+        <div class="summary-row total"><span>Total pembayaran</span><strong id="totalPrice">Rp 0</strong></div>
+      </div>
+    </section>
+
+    <section class="checkout-section">
+      <h3 class="step-title"><span class="step-number">3</span>Metode pembayaran</h3>
+      <div class="payment-options">
+        <button type="button" class="payment-card" data-method="SeaBank">
+          <span class="payment-icon">🏦</span>
+          <span><strong>SeaBank</strong><small>Transfer rekening</small></span>
+        </button>
+        <button type="button" class="payment-card" data-method="QRIS">
+          <span class="payment-icon">▦</span>
+          <span><strong>QRIS</strong><small>Scan untuk membayar</small></span>
+        </button>
+      </div>
+
+      <div id="paymentDetails" class="payment-details">
+        <div id="paymentText" class="muted"></div>
+        <img id="qrImage" src="/assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png" alt="QRIS pembayaran">
+      </div>
+      <div class="error" id="paymentError"></div>
+    </section>
+
+    <div class="order-actions">
+      <button class="cancel-btn" id="cancelBtn" type="button">Batal</button>
+      <button class="submit-btn" id="submitBtn" type="button">Buat Pesanan</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const API_URL='/api/order';
+const WHATSAPP_NUMBER='6285780024940';
+const SEABANK_ACCOUNT='901004935916';
+const SEABANK_NAME='Muhammad Abdul Aziz';
+
+const products=[
+  ['50 Robux',8000],['100 Robux',16000],['200 Robux',30000],['400 Robux',60000],
+  ['800 Robux',120000],['1200 Robux',180000],['2000 Robux',300000],['4500 Robux',675000]
+];
+
+let selected=null;
+let orderId='';
+let paymentMethod='';
+let contactMethod='';
+
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+
+function money(n){return `Rp ${Number(n).toLocaleString('id-ID')}`}
+
+function makeOrderId(){
+  return 'SOL-'+Date.now().toString(36).toUpperCase();
+}
+
+function clearErrors(){
+  ['usernameError','whatsappError','discordError','paymentError'].forEach(id=>$( '#'+id).textContent='');
+  ['username','whatsapp','discord'].forEach(id=>$('#'+id).classList.remove('invalid'));
+  $('#status').className='status';
+  $('#status').textContent='';
+}
+
+function resetCheckout(){
+  selected=null;orderId='';paymentMethod='';contactMethod='';
+  $('#username').value='';$('#whatsapp').value='';$('#discord').value='';
+  $$('input[name="contactMethod"]').forEach(x=>x.checked=false);
+  $$('.payment-card').forEach(x=>x.classList.remove('selected'));
+  $('#whatsappField').classList.add('hidden');
+  $('#discordField').classList.add('hidden');
+  $('#paymentDetails').classList.remove('show');
+  $('#qrImage').classList.remove('hidden');
+  $('#summary').textContent='-';$('#orderId').textContent='-';
+  $('#contactSummary').textContent='-';$('#totalPrice').textContent='Rp 0';
+  clearErrors();
+}
+
+function openModal(index){
+  resetCheckout();
+  selected=products[index];
+  orderId=makeOrderId();
+  $('#summary').textContent=selected[0];
+  $('#orderId').textContent=orderId;
+  $('#totalPrice').textContent=money(selected[1]);
+  $('#modal').classList.add('show');
+  $('#modal').setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  setTimeout(()=>$('#username').focus(),50);
+}
+
+function closeModal(){
+  $('#modal').classList.remove('show');
+  $('#modal').setAttribute('aria-hidden','true');
+  document.body.classList.remove('modal-open');
+}
+
+function setContactMethod(method){
+  contactMethod=method;
+  $('#whatsappField').classList.toggle('hidden',method!=='WhatsApp');
+  $('#discordField').classList.toggle('hidden',method!=='Discord');
+  $('#contactSummary').textContent='-';
+  if(method==='WhatsApp') $('#whatsapp').focus();
+  if(method==='Discord') $('#discord').focus();
+}
+
+function updateContactSummary(){
+  if(contactMethod==='WhatsApp') $('#contactSummary').textContent=$('#whatsapp').value.trim()||'-';
+  if(contactMethod==='Discord') $('#contactSummary').textContent=$('#discord').value.trim()||'-';
+}
+
+function selectPayment(method,card){
+  paymentMethod=method;
+  $$('.payment-card').forEach(x=>x.classList.toggle('selected',x===card));
+  const details=$('#paymentDetails');
+  const text=$('#paymentText');
+  details.classList.add('show');
+
+  if(method==='SeaBank'){
+    text.innerHTML=`Transfer ke SeaBank <strong>${SEABANK_ACCOUNT}</strong> a.n. <strong>${SEABANK_NAME}</strong>. Setelah transfer, kirim bukti pembayaran kepada admin.`;
+    $('#qrImage').classList.add('hidden');
+  }else{
+    text.textContent='Scan QRIS berikut untuk membayar, lalu simpan bukti pembayaran untuk konfirmasi kepada admin.';
+    $('#qrImage').classList.remove('hidden');
+  }
+}
+
+function validate(){
+  clearErrors();
+  let ok=true;
+  const username=$('#username').value.trim();
+
+  if(!username){
+    $('#usernameError').textContent='Username Roblox wajib diisi.';
+    $('#username').classList.add('invalid');ok=false;
+  }else if(username.length<3){
+    $('#usernameError').textContent='Username Roblox terlalu pendek.';
+    $('#username').classList.add('invalid');ok=false;
+  }
+
+  if(!contactMethod){
+    $('#status').textContent='Pilih metode kontak: WhatsApp atau Discord.';
+    $('#status').className='status error show';ok=false;
+  }else if(contactMethod==='WhatsApp'){
+    const wa=$('#whatsapp').value.trim();
+    const digits=wa.replace(/\D/g,'');
+    if(!wa){
+      $('#whatsappError').textContent='Nomor WhatsApp wajib diisi.';
+      $('#whatsapp').classList.add('invalid');ok=false;
+    }else if(digits.length<10||digits.length>15){
+      $('#whatsappError').textContent='Masukkan nomor WhatsApp yang valid.';
+      $('#whatsapp').classList.add('invalid');ok=false;
+    }
+  }else{
+    const dc=$('#discord').value.trim();
+    if(!dc){
+      $('#discordError').textContent='Username Discord wajib diisi.';
+      $('#discord').classList.add('invalid');ok=false;
+    }else if(dc.length<2){
+      $('#discordError').textContent='Username Discord terlalu pendek.';
+      $('#discord').classList.add('invalid');ok=false;
+    }
+  }
+
+  if(!paymentMethod){
+    $('#paymentError').textContent='Pilih metode pembayaran terlebih dahulu.';
+    ok=false;
+  }
+  return ok;
+}
+
+async function submitOrder(){
+  if(!selected){return}
+  if(!validate()) return;
+
+  const username=$('#username').value.trim();
+  const contact=contactMethod==='WhatsApp'
+    ? $('#whatsapp').value.trim()
+    : $('#discord').value.trim();
+
+  const payload={
+    orderId,
+    product:selected[0],
+    price:selected[1],
+    username,
+    contact,
+    contactMethod,
+    paymentMethod
+  };
+
+  const btn=$('#submitBtn');
+  btn.disabled=true;
+  btn.textContent='Membuat pesanan...';
+
+  try{
+    const response=await fetch(API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+
+    let data={};
+    try{data=await response.json()}catch(_){}
+
+    if(!response.ok||!data.success){
+      throw new Error(data.message||'Gagal membuat pesanan. Silakan coba lagi.');
+    }
+
+    $('#status').textContent=`Pesanan ${orderId} berhasil dibuat.`;
+    $('#status').className='status success show';
+
+    const contactLine=contactMethod==='WhatsApp'
+      ? `WhatsApp: ${contact}`
+      : `Discord: ${contact}`;
+
+    const message=
+      `Halo admin, saya ingin konfirmasi pesanan ${orderId}.\n`+
+      `Username Roblox: ${username}\n`+
+      `Produk: ${selected[0]}\n`+
+      `Total: ${money(selected[1])}\n`+
+      `Kontak: ${contactLine}\n`+
+      `Metode pembayaran: ${paymentMethod}.`;
+
+    setTimeout(()=>{
+      closeModal();
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,'_blank','noopener');
+    },450);
+
+  }catch(error){
+    $('#status').textContent=error.message||'Terjadi kesalahan saat mengirim pesanan.';
+    $('#status').className='status error show';
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Buat Pesanan';
+  }
+}
+
+$('#products').innerHTML=products.map((p,i)=>`
+  <article class="product ${i===4?'featured':''}">
+    <div>
+      <div class="badge">${i===4?'Paling populer':'Robux package'}</div>
+      <h3>${p[0]}</h3>
+      <div class="price">${money(p[1])}</div>
+      <div class="meta">Proses cepat dan aman setelah pembayaran dikonfirmasi.</div>
+    </div>
+    <button class="buy" type="button" data-index="${i}">Pilih paket</button>
+  </article>
+`).join('');
+
+$$('.buy').forEach(btn=>btn.addEventListener('click',()=>openModal(Number(btn.dataset.index))));
+$$('input[name="contactMethod"]').forEach(radio=>radio.addEventListener('change',e=>setContactMethod(e.target.value)));
+$$('.payment-card').forEach(card=>card.addEventListener('click',()=>selectPayment(card.dataset.method,card)));
+
+$('#whatsapp').addEventListener('input',updateContactSummary);
+$('#discord').addEventListener('input',updateContactSummary);
+$('#cancelBtn').addEventListener('click',closeModal);
+$('#closeBtn').addEventListener('click',closeModal);
+$('#submitBtn').addEventListener('click',submitOrder);
+
+$('#modal').addEventListener('click',e=>{
+  if(e.target.id==='modal') closeModal();
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && $('#modal').classList.contains('show')) closeModal();
+});
+</script>
+</body>
+</html>
