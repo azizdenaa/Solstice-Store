@@ -8,17 +8,14 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 :root{
-  /* richer non-flat palette: light background, soft warm gradient accents */
   --bg:#f5f7fb; --bg-2:#ffffff;
   --panel:#ffffff; --card:#ffffff; --card-2:#f8fafc;
   --line:#e6e9ee; --muted:#6b6f76; --text:#0f1722;
-  --accent-1:#6d28d9; /* indigo */
-  --accent-2:#2563eb; /* blue */
-  --accent-3:#06b6d4; /* teal */
+  --accent-1:#6d28d9; --accent-2:#2563eb; --accent-3:#06b6d4;
   --accent-grad: linear-gradient(135deg,var(--accent-2),var(--accent-1));
-  --glass:rgba(255,255,255,0.7);
   --shadow-soft:0 10px 30px rgba(15,23,42,.08);
   --shadow-deep:0 28px 60px rgba(15,23,42,.12);
+  --success:#2ea44f;--danger:#d0454c;
 }
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.04),transparent 15%),radial-gradient(circle at 90% 90%,rgba(109,40,217,.03),transparent 12%),linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
@@ -34,7 +31,7 @@ button,input,select,textarea{font:inherit}
 .menus a{padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:700}
 .menus a.active{background:var(--card-2);color:var(--text)}
 
-/* Hero - eye catching with layered gradient */
+/* Hero */
 .hero{padding:36px 0 6px}
 .hero-inner{display:flex;gap:28px;align-items:center}
 .hero-left{flex:1}
@@ -46,7 +43,6 @@ button,input,select,textarea{font:inherit}
 .btn-primary{padding:12px 18px;border-radius:12px;background:var(--accent-grad);color:white;font-weight:800;border:0;box-shadow:0 14px 40px rgba(37,99,235,.12);cursor:pointer}
 .btn-secondary{padding:12px 18px;border-radius:12px;background:transparent;border:1px solid var(--line);color:var(--text);font-weight:700}
 .hero-card{background:linear-gradient(180deg,rgba(255,255,255,0.9),var(--card));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-deep)}
-.promo{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;background:linear-gradient(90deg,#eef2ff,#f6fbff);border-radius:999px;color:var(--accent-2);font-weight:700}
 
 /* Store panel */
 .section{padding:28px 0}
@@ -55,7 +51,7 @@ button,input,select,textarea{font:inherit}
 .store-head h2{margin:0}
 .store-note{background:var(--card-2);padding:8px 12px;border-radius:999px;color:var(--muted);font-weight:700}
 
-/* Products grid - premium card layout, 3 columns desktop (wider cards) */
+/* Products grid */
 .products{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .product{background:linear-gradient(180deg,rgba(255,255,255,0.92),var(--card-2));border-radius:14px;padding:18px;border:1px solid rgba(15,23,42,.04);display:flex;flex-direction:column;justify-content:space-between;transition:transform .22s,box-shadow .22s}
 .product:hover{transform:translateY(-10px);box-shadow:var(--shadow-deep)}
@@ -68,23 +64,28 @@ button,input,select,textarea{font:inherit}
 .price-sub{color:var(--muted);font-size:13px}
 .product .meta{color:var(--muted);font-size:13px;margin-top:8px}
 .actions{display:flex;gap:10px;margin-top:16px}
-.buy{flex:1;padding:11px 14px;border-radius:12px;border:0;background:var(--accent-grad);color:white;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(37,99,235,.12)}
-.buy.ghost{background:transparent;border:1px solid var(--line);color:var(--accent-2);font-weight:700}
-
-/* subtle decorative gem corner */
-.ribbon{position:relative}
-.ribbon:after{content:"";position:absolute;right:-12px;top:-12px;width:44px;height:44px;background:linear-gradient(135deg,#ffd66b,#ffb84d);border-radius:10px;box-shadow:0 10px 24px rgba(255,184,77,.14)}
+.buy-primary{flex:1;padding:11px 14px;border-radius:12px;border:0;background:var(--accent-grad);color:white;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(37,99,235,.12)}
+.buy-ghost{background:transparent;border:1px solid var(--line);color:var(--accent-2);font-weight:700;border-radius:12px;padding:10px 12px}
 
 /* Footer */
 .footer{padding:22px 0;color:var(--muted)}
 
-/* Modal (light) kept simple */
+/* Modal (checkout) */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.45)}
 .modal.show{display:flex}
 .modalbox{width:min(720px,100%);background:var(--panel);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px rgba(15,23,42,.12)}
 .close{position:absolute;right:18px;top:18px;border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}
 
-/* Responsive tweaks */
+/* Form fields */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.field label{font-weight:700;font-size:13px}
+.field input{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card-2)}
+.error{color:var(--danger);font-size:13px;min-height:18px}
+.status{padding:10px;border-radius:10px;margin-top:10px;display:none}
+.status.show{display:block}
+.status.error{background:rgba(208,35,44,.06);color:var(--danger);border:1px solid rgba(208,35,44,.12)}
+.status.success{background:rgba(46,164,79,.06);color:var(--success);border:1px solid rgba(46,164,79,.12)}
+
 @media(max-width:1000px){.products{grid-template-columns:repeat(2,1fr)}.hero-right{display:none}.hero-inner{flex-direction:column;align-items:flex-start;gap:16px}}
 @media(max-width:600px){.products{grid-template-columns:1fr}.store-head{flex-direction:column;align-items:flex-start;gap:10px}.shell{padding:18px}}
 </style>
@@ -103,6 +104,7 @@ button,input,select,textarea{font:inherit}
     </nav>
   </div>
 </header>
+
 <main>
   <section class="hero">
     <div class="shell">
@@ -112,8 +114,8 @@ button,input,select,textarea{font:inherit}
           <h1>SOLSTICE <span style="background:linear-gradient(90deg,var(--accent-2),var(--accent-1));-webkit-background-clip:text;background-clip:text;color:transparent">STORE</span></h1>
           <p>Temukan paket Robux dengan harga transparan dan proses pemesanan yang cepat. Pilih paket, isi data, pilih kontak, lalu lakukan pembayaran dengan aman.</p>
           <div class="hero-cta">
-            <button class="btn-primary">Lihat Paket Robux</button>
-            <button class="btn-secondary">Cara Order</button>
+            <button class="btn-primary" onclick="document.querySelector('#store').scrollIntoView({behavior:'smooth'})">Lihat Paket Robux</button>
+            <button class="btn-secondary" onclick="document.querySelector('#about').scrollIntoView({behavior:'smooth'})">Cara Order</button>
           </div>
         </div>
         <div class="hero-right">
@@ -182,22 +184,64 @@ button,input,select,textarea{font:inherit}
   </div>
 </footer>
 
-<!-- Modal (checkout) kept simple -->
+<!-- CHECKOUT MODAL: full checkout form restored -->
 <div class="modal" id="modal" aria-hidden="true">
   <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
     <button class="close" id="closeBtn" type="button" aria-label="Tutup">×</button>
-    <h2 id="checkoutTitle">Checkout Pesanan</h2>
-    <div style="color:var(--muted);margin-bottom:8px">Ikuti 3 langkah berikut. Data kontak wajib sesuai metode yang kamu pilih.</div>
-    <div style="margin-top:8px">
-      <div style="margin-bottom:12px"><strong>Produk</strong> <span id="summary" style="float:right">-</span></div>
-      <div style="margin-bottom:12px"><strong>Order ID</strong> <span id="orderId" style="float:right">-</span></div>
-      <div style="margin-bottom:12px"><strong>Total</strong> <span id="totalPrice" style="float:right">Rp 0</span></div>
+    <div class="checkout-head">
+      <h2 id="checkoutTitle">Checkout Pesanan</h2>
+      <div style="color:var(--muted)">Isi data berikut untuk menyelesaikan pesanan.</div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="buy" id="modalBuy">Lanjut</button>
-      <button class="buy ghost" id="cancelBtn">Batal</button>
-    </div>
-    <div class="status" id="status" style="margin-top:12px;display:none"></div>
+
+    <section style="margin-top:12px">
+      <div class="field">
+        <label for="username">Username Roblox</label>
+        <input id="username" maxlength="30" placeholder="Contoh: ZeeDeveloper" autocomplete="off" spellcheck="false">
+        <div class="error" id="usernameError"></div>
+      </div>
+
+      <div class="field">
+        <label>Metode kontak</label>
+        <div style="display:flex;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="contactMethod" value="WhatsApp"> <span>WhatsApp</span></label>
+          <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="contactMethod" value="Discord"> <span>Discord</span></label>
+        </div>
+        <div class="error" id="contactError"></div>
+      </div>
+
+      <div class="field hidden" id="whatsappField">
+        <label for="whatsapp">Nomor WhatsApp</label>
+        <input id="whatsapp" inputmode="tel" maxlength="16" placeholder="Contoh: 0857xxxxxxxx" autocomplete="tel">
+        <div class="error" id="whatsappError"></div>
+      </div>
+
+      <div class="field hidden" id="discordField">
+        <label for="discord">Username Discord</label>
+        <input id="discord" maxlength="40" placeholder="Contoh: zee.dev" autocomplete="off" spellcheck="false">
+        <div class="error" id="discordError"></div>
+      </div>
+
+      <div class="field">
+        <label>Metode pembayaran</label>
+        <div style="display:flex;gap:10px">
+          <button type="button" class="payment-card" data-method="SeaBank" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);">🏦 SeaBank</button>
+          <button type="button" class="payment-card" data-method="QRIS" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);">▦ QRIS</button>
+        </div>
+        <div class="error" id="paymentError"></div>
+      </div>
+
+      <div id="paymentDetails" style="display:none;margin-top:8px;padding:10px;border:1px dashed var(--line);border-radius:8px;background:var(--card-2)">
+        <div id="paymentText" style="color:var(--muted)"></div>
+        <img id="qrImage" src="/assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png" alt="QRIS" style="width:160px;margin-top:8px">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="buy-primary" id="submitBtn" type="button">Buat Pesanan</button>
+        <button class="buy-ghost" id="cancelBtn" type="button">Batal</button>
+      </div>
+
+      <div id="status" class="status" role="status"></div>
+    </section>
   </div>
 </div>
 
@@ -213,80 +257,139 @@ const products=[
   ['800 Robux',132680],['900 Robux',149265],['1.000 Robux',165850]
 ];
 
-// single Robux/gem SVG (stylized) — colorized by replacing stroke/fill via template
-const robuxSVG = (color1, color2)=> `
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g" x1="0" x2="1">
-        <stop offset="0" stop-color="${color1}"/>
-        <stop offset="1" stop-color="${color2}"/>
-      </linearGradient>
-    </defs>
-    <path d="M12 2L20 8l-8 14L4 8l8-6z" fill="url(#g)" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>
-    <path d="M12 7.5v8" stroke="rgba(255,255,255,0.5)" stroke-width="0.8" stroke-linecap="round"/>
-  </svg>`;
+const iconPalettes = [
+  ['#ff9966','#ff5e62'],['#6dd5ed','#2193b0'],['#fbc2eb','#a18cd1'],
+  ['#f6d365','#fda085'],['#a8ff78','#78ffd6'],['#85FFBD','#FFFB7D']
+];
+function robuxSVG(color1,color2){
+  return `\n  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n    <defs>\n      <linearGradient id="g${color1.replace('#','')}" x1="0" x2="1">\n        <stop offset="0" stop-color="${color1}"/>\n        <stop offset="1" stop-color="${color2}"/>\n      </linearGradient>\n    </defs>\n    <path d="M12 2L20 8l-8 14L4 8l8-6z" fill="url(#g${color1.replace('#','')})" stroke="rgba(0,0,0,0.06)" stroke-width="0.5"/>\n    <path d="M12 7.5v8" stroke="rgba(255,255,255,0.5)" stroke-width="0.8" stroke-linecap="round"/>\n  </svg>`;
+}
 
-let selected=null;let orderId='';let paymentMethod='';let contactMethod='';
-const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
+let selected=null; let orderId=''; let paymentMethod=''; let contactMethod='';
+const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
+
 function money(n){return `Rp ${Number(n).toLocaleString('id-ID')}`}
 function makeOrderId(){return 'SOL-'+Date.now().toString(36).toUpperCase();}
-function openModal(index){selected=products[index];orderId=makeOrderId();$('#summary').textContent=selected[0];$('#orderId').textContent=orderId;$('#totalPrice').textContent=money(selected[1]);$('#modal').classList.add('show');$('#modal').setAttribute('aria-hidden','false');}
-function closeModal(){$('#modal').classList.remove('show');$('#modal').setAttribute('aria-hidden','true');}
 
-// Choose a palette of gradients to colorize the Robux gem icons
-const iconPalettes = [
-  ['#ff9966','#ff5e62'],
-  ['#6dd5ed','#2193b0'],
-  ['#fbc2eb','#a18cd1'],
-  ['#f6d365','#fda085'],
-  ['#a8ff78','#78ffd6'],
-  ['#85FFBD','#FFFB7D']
-];
-
-// Render premium product cards with robux icon
+// Render products
 $('#products').innerHTML=products.map((p,i)=>{
   const pal = iconPalettes[i % iconPalettes.length];
   const icon = robuxSVG(pal[0], pal[1]);
-  const isFeatured=(i===4);
-  return `
-  <article class="product ${isFeatured? 'ribbon':''}">
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="product-inner">
-        <div class="product-image">${icon}</div>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:10px">
-            <div class="badge">${isFeatured? 'Paling populer':'Paket'}</div>
-            <div style="font-weight:700;color:var(--muted);font-size:13px">${p[0]}</div>
-          </div>
-          <h3>${p[0]}</h3>
-          <div class="meta">Proses cepat dan aman setelah pembayaran dikonfirmasi.</div>
-        </div>
-      </div>
-      <div class="price-row">
-        <div>
-          <div class="price">${money(p[1])}</div>
-          <div class="price-sub">Harga termasuk admin</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-          <button class="buy" data-index="${i}">Pilih</button>
-          <button class="buy ghost" data-index-detail="${i}">Detail</button>
-        </div>
-      </div>
-    </div>
-  </article>`;
+  const isFeatured = (i===4);
+  return `\n  <article class="product ${isFeatured? 'ribbon':''}">\n    <div style="display:flex;flex-direction:column;gap:12px">\n      <div class="product-inner">\n        <div class="product-image">${icon}</div>\n        <div style="flex:1">\n          <div style="display:flex;align-items:center;gap:10px">\n            <div class="badge">${isFeatured? 'Paling populer':'Paket'}</div>\n            <div style="font-weight:700;color:var(--muted);font-size:13px">${p[0]}</div>\n          </div>\n          <h3>${p[0]}</h3>\n          <div class="meta">Proses cepat dan aman setelah pembayaran dikonfirmasi.</div>\n        </div>\n      </div>\n      <div class="price-row">\n        <div>\n          <div class="price">${money(p[1])}</div>\n          <div class="price-sub">Harga termasuk admin</div>\n        </div>\n        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">\n          <button class="buy-primary" data-index="${i}">Pilih</button>\n          <button class="buy-ghost" data-index-detail="${i}">Detail</button>\n        </div>\n      </div>\n    </div>\n  </article>`;
 }).join('');
 
-// Event bindings: open modal when clicking primary buy (dataset.index)
-$$('.buy').forEach(btn=>btn.addEventListener('click',(e)=>{
-  const idx=btn.dataset.index;
-  if(typeof idx!=='undefined') openModal(Number(idx));
+// Open modal only for primary buy buttons
+document.querySelectorAll('button[data-index]').forEach(btn=>btn.addEventListener('click',()=>{
+  const idx = Number(btn.dataset.index);
+  openModal(idx);
 }));
 
-$('#cancelBtn').addEventListener('click',closeModal);
-$('#closeBtn').addEventListener('click',closeModal);
+// Modal UI helpers
+function openModal(index){
+  selected = products[index];
+  orderId = makeOrderId();
+  // reset form
+  $('#username').value=''; $('#whatsapp').value=''; $('#discord').value='';
+  paymentMethod=''; contactMethod='';
+  $('#whatsappField').classList.add('hidden'); $('#discordField').classList.add('hidden');
+  $('#paymentDetails').style.display='none'; $('#paymentText').textContent='';
+  $('#status').className='status'; $('#status').textContent='';
 
-// Accessibility: close modal on Escape
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#modal').classList.contains('show')) closeModal();});
+  // update summary area in modal header
+  $('#checkoutTitle').textContent = `Checkout Pesanan — ${selected[0]}`;
+  $('#modal').classList.add('show'); $('#modal').setAttribute('aria-hidden','false');
+}
+function closeModal(){
+  $('#modal').classList.remove('show'); $('#modal').setAttribute('aria-hidden','true');
+}
+
+// Contact method selection
+$$('input[name="contactMethod"]').forEach(r=>r.addEventListener('change',e=>{
+  contactMethod = e.target.value;
+  $('#whatsappField').classList.toggle('hidden', contactMethod !== 'WhatsApp');
+  $('#discordField').classList.toggle('hidden', contactMethod !== 'Discord');
+}));
+
+// Payment selection
+$$('.payment-card').forEach(card=>card.addEventListener('click',e=>{
+  const method = card.dataset.method;
+  paymentMethod = method;
+  // UI: highlight selected
+  $$('.payment-card').forEach(c=>c.style.boxShadow='none');
+  card.style.boxShadow = '0 8px 18px rgba(37,99,235,.08)';
+  // show details
+  $('#paymentDetails').style.display = 'block';
+  if(method === 'SeaBank'){
+    $('#paymentText').innerHTML = `Transfer ke SeaBank <strong>${SEABANK_ACCOUNT}</strong> a.n. <strong>${SEABANK_NAME}</strong>. Setelah transfer, kirim bukti pembayaran kepada admin.`;
+    $('#qrImage').style.display='none';
+  } else {
+    $('#paymentText').textContent = 'Scan QRIS berikut untuk membayar, lalu simpan bukti pembayaran untuk konfirmasi kepada admin.';
+    $('#qrImage').style.display='block';
+  }
+}));
+
+function clearErrors(){
+  ['usernameError','contactError','whatsappError','discordError','paymentError'].forEach(id=>$('#'+id).textContent='');
+  $('#status').className='status'; $('#status').textContent='';
+}
+
+function validate(){
+  clearErrors();
+  let ok = true;
+  const username = $('#username').value.trim();
+  if(!username){ $('#usernameError').textContent='Username Roblox wajib diisi.'; ok=false; }
+  if(!contactMethod){ $('#contactError').textContent='Pilih metode kontak (WhatsApp atau Discord).'; ok=false; }
+  else if(contactMethod === 'WhatsApp'){
+    const wa = $('#whatsapp').value.trim(); const digits = wa.replace(/\D/g,'');
+    if(!wa){ $('#whatsappError').textContent='Nomor WhatsApp wajib diisi.'; ok=false; }
+    else if(digits.length < 10 || digits.length > 15){ $('#whatsappError').textContent='Masukkan nomor WhatsApp yang valid.'; ok=false; }
+  } else {
+    const dc = $('#discord').value.trim(); if(!dc){ $('#discordError').textContent='Username Discord wajib diisi.'; ok=false; }
+  }
+  if(!paymentMethod){ $('#paymentError').textContent='Pilih metode pembayaran.'; ok=false; }
+  return ok;
+}
+
+async function submitOrder(){
+  if(!selected) return;
+  if(!validate()) return;
+
+  const username = $('#username').value.trim();
+  const contact = contactMethod === 'WhatsApp' ? $('#whatsapp').value.trim() : $('#discord').value.trim();
+  const payload = { orderId, product: selected[0], price: selected[1], username, contact, contactMethod, paymentMethod };
+
+  const btn = $('#submitBtn'); btn.disabled = true; btn.textContent = 'Membuat pesanan...';
+  try{
+    const res = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    let data = {};
+    try{ data = await res.json(); } catch(_){}
+    if(!res.ok || !data.success){ throw new Error(data.message || 'Gagal membuat pesanan.'); }
+
+    $('#status').className='status show success'; $('#status').textContent = `Pesanan ${orderId} berhasil dibuat.`;
+
+    const contactLine = contactMethod === 'WhatsApp' ? `WhatsApp: ${contact}` : `Discord: ${contact}`;
+    const message = `Halo admin, saya ingin konfirmasi pesanan ${orderId}.\nUsername Roblox: ${username}\nProduk: ${selected[0]}\nTotal: ${money(selected[1])}\nKontak: ${contactLine}\nMetode pembayaran: ${paymentMethod}.`;
+
+    setTimeout(()=>{
+      closeModal(); window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,'_blank','noopener');
+    },450);
+
+  } catch(err){
+    $('#status').className='status show error'; $('#status').textContent = err.message || 'Terjadi kesalahan saat membuat pesanan.';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Buat Pesanan';
+  }
+}
+
+// bind submit and cancel
+$('#submitBtn').addEventListener('click', submitOrder);
+$('#cancelBtn').addEventListener('click', closeModal);
+$('#closeBtn').addEventListener('click', closeModal);
+// close on backdrop click
+$('#modal').addEventListener('click', e=>{ if(e.target.id === 'modal') closeModal(); });
+// escape
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && $('#modal').classList.contains('show')) closeModal(); });
 </script>
 </body>
 </html>
