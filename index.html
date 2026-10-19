@@ -11,15 +11,15 @@
 </style>
 </head>
 <body>
-<header class="nav"><div class="shell navin"><a href="#home"><img class="logo" src="/assets/solstice-logo.png" alt="Solstice Store"></a><nav class="menus"><a class="active" href="#home">⌂ Home</[...]
-<main id="home"><section class="hero"><div class="shell"><div class="eyebrow">FAST · SAFE · TRUSTED</div><div class="promo-banner">Store ditutup hingga waktu yang tidak ditentukan karena ada masalah teknis. Jika masalah teknis sudah teratasi, informasi dan pembelian Robux dapat dilakukan kembali. Terima kasih.</div>
+<header class="nav"><div class="shell navin"><a href="#home"><img class="logo" src="/assets/solstice-logo.png" alt="Solstice Store"></a><nav class="menus"><a class="active" href="#home">⌂ Home</a><a[...]
+<main id="home"><section class="hero"><div class="shell"><div class="eyebrow">FAST · SAFE · TRUSTED</div><div class="promo-banner">Promo spesial: Harga Robux kini jauh lebih terjangkau hingga 27 Sep[...]
 <section id="store" class="section"><div class="shell"><div class="store-panel"><div class="store-head"><div><div class="section-kicker">Robux Store</div><h2>Pilih paket yang kamu butuhkan</h2><p>[...]
 <section id="about" class="section"><div class="shell"><div class="info-grid"><div class="info"><h3>Solstice Store</h3><p>Storefront pemesanan paket Robux berbasis username dengan proses yang jelas, a[...]
 <footer><div class="shell footerin"><div><img class="footer-logo" src="/assets/solstice-logo.png" alt="Solstice Store"><div>© 2026 Solstice Store. All rights reserved.</div></div><div>WhatsApp Admin:[...]
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="modalbox"><button class="close" id="closeModal" aria-label="Tutup">×</button><div class="chec[...]
 <script>
 const API_URL='/api/order',WHATSAPP_NUMBER='6285780024940',SEABANK_ACCOUNT='901004935916',SEABANK_NAME='Muhammad Abdul Aziz',products=[['50 Robux','50',8000],['100 Robux','100',16000],['200 Robux','20[...]
-const $=s=>document.querySelector(s),money=n=>`Rp ${n.toLocaleString('id-ID')}`,makeOrderId=()=>`SOL-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2,6).toUpperCase()`;
+const $=s=>document.querySelector(s),money=n=>`Rp ${n.toLocaleString('id-ID')}`,makeOrderId=()=>`SOL-${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2,6).toUpperCase()}`;
 function openModal(i){selected=products[i];orderId=makeOrderId();paymentMethod='';contactMethod='';submitting=false;$('#summary').textContent=selected[0];$('#orderId').textContent=orderId;$('#totalPri[...]
 function closeModal(){if(submitting)return;$('#modal').classList.remove('show');document.body.style.overflow=''}
 function clearErrors(){document.querySelectorAll('.error,.form-error').forEach(x=>{x.textContent='';x.classList.remove('show')})}function showError(id,msg){const e=$(`#${id}`);e.textContent=msg;e.clas[...]
