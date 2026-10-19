@@ -1,8 +1,17 @@
 // api/order.js
-// Serverless handler for Vercel — improved validation and price security.
-// Added webhook diagnostics in the response to help debug Discord webhook issues.
+// Improved Discord webhook delivery: server-side product mapping, validation, retry, and diagnostics.
 
 const crypto = require('crypto');
+
+async function getFetch() {
+  if (typeof fetch === 'function') return fetch;
+  try {
+    const mod = await import('node-fetch');
+    return mod.default || mod;
+  } catch (e) {
+    throw new Error('fetch not available and node-fetch import failed: ' + e.message);
+  }
+}
 
 module.exports = async (req, res) => {
   try {
@@ -11,7 +20,6 @@ module.exports = async (req, res) => {
       return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
 
-    // parse body (Vercel provides req.body for JSON)
     const body = req.body || (await new Promise((r) => {
       let data = '';
       req.on('data', chunk => data += chunk);
@@ -37,7 +45,6 @@ module.exports = async (req, res) => {
       "1000": { name: "1000 Robux", amount: 165850 }
     };
 
-    // Determine productId
     let productId = incomingProductId;
     if (!productId && incomingProductName) {
       const digits = (String(incomingProductName).match(/[0-9\.]+/) || [null])[0];
@@ -84,40 +91,45 @@ module.exports = async (req, res) => {
     const amount = product.amount;
     const orderId = `SOL-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
-    const lines = [
-      `📦 Pesanan baru — ${orderId}`,
-      `Produk: ${product.name} (id: ${productId})`,
-      `Total: ${formatRupiah(amount)}`,
-      `Username Roblox: ${username}`,
-      `Metode Kontak: ${contactMethod}`
-    ];
-    if (contactMethod === 'WhatsApp') lines.push(`WhatsApp: ${whatsapp}`);
-    if (contactMethod === 'Discord') lines.push(`Discord: ${discordUsername}`);
-    lines.push(`Pembayaran: ${paymentMethod}`);
+    const embed = {
+      title: `📦 Pesanan baru — ${orderId}`,
+      description: `${product.name} (id: ${productId})`,
+      color: 0x6b2cff,
+      fields: [
+        { name: 'Total', value: formatRupiah(amount), inline: true },
+        { name: 'Pembayaran', value: paymentMethod, inline: true },
+        { name: 'Username Roblox', value: username, inline: false },
+        { name: 'Metode Kontak', value: contactMethod, inline: true }
+      ],
+      timestamp: new Date().toISOString()
+    };
+    if (contactMethod === 'WhatsApp') embed.fields.push({ name: 'WhatsApp', value: whatsapp, inline: true });
+    if (contactMethod === 'Discord') embed.fields.push({ name: 'Discord', value: discordUsername, inline: true });
 
-    const discordPayload = { content: lines.join('\n') };
+    const discordPayload = { embeds: [embed] };
     const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
 
-    // collect webhook diagnostics to return for debugging
-    let webhookDiagnostic = { called: false };
+    let webhookDiagnostic = { called: false, attempts: [] };
 
     if (DISCORD_WEBHOOK) {
-      try {
-        const doFetch = typeof fetch === 'function' ? fetch : (await import('node-fetch')).default;
-        webhookDiagnostic.called = true;
-        const r = await doFetch(DISCORD_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(discordPayload)
-        });
-        webhookDiagnostic.status = r.status;
-        try { webhookDiagnostic.body = await r.text(); } catch (e) { webhookDiagnostic.body = null; }
-        if (r.status !== 204 && r.status !== 200) {
-          console.warn('Discord webhook returned', r.status, webhookDiagnostic.body);
+      const fetchImpl = await getFetch();
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          webhookDiagnostic.called = true;
+          const r = await fetchImpl(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Agent': 'SolsticeStore/1.0 (+https://your-site.example)'
+            },
+            body: JSON.stringify(discordPayload),
+          });
+          const text = await r.text().catch(() => null);
+          webhookDiagnostic.attempts.push({ attempt, status: r.status, body: text });
+          if (r.status === 204 || r.status === 200) break;
+        } catch (err) {
+          webhookDiagnostic.attempts.push({ attempt, error: String(err?.message || err) });
         }
-      } catch (err) {
-        webhookDiagnostic.error = String(err?.message || err);
-        console.warn('Failed to call Discord webhook:', webhookDiagnostic.error);
       }
     } else {
       webhookDiagnostic.called = false;
@@ -132,14 +144,21 @@ module.exports = async (req, res) => {
     if (contactMethod === 'Discord') contactLine = `Discord: ${discordUsername}`;
 
     const messageLines = [
-      'Halo Admin Solstice Store,', '', 'Saya ingin mengonfirmasi pesanan.', '',
-      `Order ID: ${orderId}`, `Username Roblox: ${username}`, `Produk: ${product.name}`, `Total: ${formatRupiah(amount)}`, `Metode Pembayaran: ${paymentMethod}`, '', 'Metode Kontak:', contactLine
+      'Halo Admin Solstice Store,', '',
+      'Saya ingin mengonfirmasi pesanan.', '',
+      `Order ID: ${orderId}`,
+      `Username Roblox: ${username}`,
+      `Produk: ${product.name}`,
+      `Total: ${formatRupiah(amount)}`,
+      `Metode Pembayaran: ${paymentMethod}`,
+      '',
+      'Metode Kontak:',
+      contactLine
     ];
 
     const encoded = encodeURIComponent(messageLines.join('\n'));
     const waLink = `https://wa.me/${ADMIN_WHATSAPP}?text=${encoded}`;
 
-    // Return created order data including webhook diagnostics for debugging
     return res.status(201).json({ success: true, orderId, amount, amountFormatted: formatRupiah(amount), waLink, webhook: webhookDiagnostic });
 
   } catch (err) {
@@ -148,6 +167,6 @@ module.exports = async (req, res) => {
   }
 };
 
-function formatRupiah(amount){
+function formatRupiah(amount) {
   return 'Rp ' + String(amount).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
