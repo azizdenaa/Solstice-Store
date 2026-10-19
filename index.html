@@ -18,7 +18,7 @@
   --success:#2ea44f;--danger:#d0454c;
 }
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.04),transparent 15%),radial-gradient(circle at 90% 90%,rgba(109,40,217,.03),transparent 12%),linear-gradient(180deg,var(--bg),var(--bg-2));font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+body{margin:0;background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.04),transparent 15%),radial-gradient(circle at 90% 90%,rgba(109,40,217,.03),transparent 12%),linear-gradient(180deg,var(--bg)[...]}
 a{text-decoration:none;color:inherit}
 button,input,select,textarea{font:inherit}
 .shell{width:min(1160px,calc(100% - 48px));margin:0 auto;padding:28px}
@@ -49,7 +49,7 @@ button,input,select,textarea{font:inherit}
 .product{background:linear-gradient(180deg,rgba(255,255,255,0.92),var(--card-2));border-radius:14px;padding:18px;border:1px solid rgba(15,23,42,.04);display:flex;flex-direction:column}
 .product:hover{transform:translateY(-10px);box-shadow:var(--shadow-deep)}
 .product-inner{display:flex;gap:16px;align-items:center}
-.product-image{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,1),#f6fbff);display:flex;align-items:center;justify-content:center;color:var(--accent-2)}
+.product-image{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,rgba(255,255,255,1),#f6fbff);display:flex;align-items:center;justify-content:center;color:var(--accent-2)[...]
 .badge{padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,rgba(37,99,235,.08),rgba(109,40,217,.06));color:var(--accent-2);font-weight:700;font-size:12px}
 .product h3{margin:6px 0 0;font-size:1.05rem}
 .price-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:12px}
@@ -62,7 +62,7 @@ button,input,select,textarea{font:inherit}
 .footer{padding:22px 0;color:var(--muted)}
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.45)}
 .modal.show{display:flex}
-.modalbox{width:min(720px,100%);background:var(--panel);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px rgba(15,23,42,.12);max-height:calc(100vh - 80px);overflow:auto}
+.modalbox{width:min(720px,100%);background:var(--panel);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px rgba(15,23,42,.12);max-height:calc(100vh - 80px);overflow:au[...]
 .close{position:absolute;right:18px;top:18px;border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .field label{font-weight:700;font-size:13px}
@@ -117,7 +117,7 @@ button,input,select,textarea{font:inherit}
               </div>
             </div>
             <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#eef2ff,#fff);display:flex;align-items:center;justify-content:center;color:var(--accent-2);font-weight:700">RB</div>
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#eef2ff,#fff);display:flex;align-items:center;justify-content:center;color:var(--accent-2);fon[...]
               <div style="color:var(--muted)">Gratis biaya admin untuk pembelian &gt; Rp100.000</div>
             </div>
           </div>
@@ -152,7 +152,7 @@ button,input,select,textarea{font:inherit}
         </div>
         <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px">
           <h3>Cara order</h3>
-          <ul style="color:var(--muted)"><li>Pilih paket Robux.</li><li>Isi username Roblox.</li><li>Pilih WhatsApp atau Discord.</li><li>Pilih SeaBank atau QRIS.</li><li>Konfirmasi pesanan setelah pembayaran.</li></ul>
+          <ul style="color:var(--muted)"><li>Pilih paket Robux.</li><li>Isi username Roblox.</li><li>Pilih WhatsApp atau Discord.</li><li>Pilih SeaBank atau QRIS.</li><li>Konfirmasi pesanan setel[...]
         </div>
         <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px">
           <h3>Perlu bantuan?</h3>
@@ -247,7 +247,7 @@ const iconPalettes = [
   ['#f6d365','#fda085'],['#a8ff78','#78ffd6'],['#85FFBD','#FFFB7D']
 ];
 function robuxSVG(color1,color2){
-  return `\n  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n    <defs>\n      <linearGradient id="g${color1.replace('#','')}" x1="0" x2="1">\n      </linearGradient>\n    </defs>\n    <rect width="24" height="24" rx="6" fill="url(#g${color1.replace('#','')})" />\n  </svg>`;
+  return `\n  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n    <defs>\n      <linearGradient id="g${color1.replace('#','')}" x1="0" x2="1">\n  [...]
 }
 
 let selected=null; let orderId=''; let paymentMethod=''; let contactMethod='';
@@ -260,7 +260,7 @@ $('#products').innerHTML=products.map((p,i)=>{
   const pal = iconPalettes[i % iconPalettes.length];
   const icon = robuxSVG(pal[0], pal[1]);
   const isFeatured = (i===4);
-  return `\n  <article class="product ${isFeatured? 'ribbon':''}">\n    <div style="display:flex;flex-direction:column;gap:12px">\n      <div class="product-inner">\n        <div class="product-image">${icon}</div>\n        <div style="flex:1">\n          <h3>${p[0]}</h3>\n          <div class="meta">${money(p[1])} — Instant delivery</div>\n        </div>\n      </div>\n      <div class="price-row">\n        <div class="price">${money(p[1])}</div>\n        <div style="display:flex;gap:8px">\n          <button class="buy-primary" data-index="${i}">Beli</button>\n        </div>\n      </div>\n    </div>\n  </article>`;
+  return `\n  <article class="product ${isFeatured? 'ribbon':''}">\n    <div style="display:flex;flex-direction:column;gap:12px">\n      <div class="product-inner">\n        <div class="product-i[...]
 }).join('');
 
 // Open modal only for primary buy buttons (use event delegation to avoid missing handlers)
@@ -310,7 +310,7 @@ document.addEventListener('click', (e)=>{
     card.style.boxShadow = '0 8px 18px rgba(37,99,235,.08)';
     if($('#paymentDetails')) $('#paymentDetails').style.display = 'block';
     if(paymentMethod === 'SeaBank'){
-      if($('#paymentText')) $('#paymentText').innerHTML = `Transfer ke SeaBank <strong>${SEABANK_ACCOUNT}</strong> a.n. <strong>${SEABANK_NAME}</strong>. Setelah transfer, kirim bukti pembayaran ke admin melalui WhatsApp atau Discord.`;
+      if($('#paymentText')) $('#paymentText').innerHTML = `Transfer ke SeaBank <strong>${SEABANK_ACCOUNT}</strong> a.n. <strong>${SEABANK_NAME}</strong>. Setelah transfer, kirim bukti pembayaran [...]`;
       if($('#qrImage')) $('#qrImage').style.display='none';
     } else {
       if($('#paymentText')) $('#paymentText').textContent = 'Scan QRIS berikut untuk membayar, lalu simpan bukti pembayaran untuk konfirmasi kepada admin.';
@@ -349,7 +349,7 @@ async function submitOrder(){
   if(!validate()) return;
 
   const username = $('#username') ? $('#username').value.trim() : '';
-  const contact = (contactMethod === 'WhatsApp') ? ($('#whatsapp' ? $('#whatsapp').value.trim() : '')) : ($('#discord' ? $('#discord').value.trim() : ''));
+  const contact = (contactMethod === 'WhatsApp') ? ($('#whatsapp') ? $('#whatsapp').value.trim() : '') : ($('#discord') ? $('#discord').value.trim() : '');
   const payload = { orderId: orderId || makeOrderId(), product: selected[0], price: selected[1], username, contact, contactMethod, paymentMethod };
 
   const btn = $('#submitBtn'); if(btn) { btn.disabled = true; btn.textContent = 'Membuat pesanan...'; }
