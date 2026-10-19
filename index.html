@@ -16,9 +16,10 @@
   --shadow-soft:0 10px 30px rgba(15,23,42,.08);
   --shadow-deep:0 28px 60px rgba(15,23,42,.12);
   --success:#2ea44f;--danger:#d0454c;
+  --accent: #6b2cff; /* keep Solstice purple */
 }
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.04),transparent 15%),radial-gradient(circle at 90% 90%,rgba(109,40,217,.03),transparent 12%),linear-gradient(180deg,var(--bg),var(--bg-2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+body{margin:0;background:radial-gradient(circle at 10% 10%,rgba(37,99,235,.04),transparent 15%),radial-gradient(circle at 90% 90%,rgba(109,40,217,.03),transparent 12%),linear-gradient(180deg,var(--bg),var(--bg-2));font-family:Inter,system-ui,Arial;color:var(--text)}
 a{text-decoration:none;color:inherit}
 button,input,select,textarea{font:inherit}
 .shell{width:min(1160px,calc(100% - 48px));margin:0 auto;padding:28px}
@@ -60,10 +61,20 @@ button,input,select,textarea{font:inherit}
 .buy-primary{flex:1;padding:11px 14px;border-radius:12px;border:0;background:var(--accent-grad);color:white;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(37,99,235,.12)}
 .buy-ghost{background:transparent;border:1px solid var(--line);color:var(--accent-2);font-weight:700;border-radius:12px;padding:10px 12px}
 .footer{padding:22px 0;color:var(--muted)}
+
+/* Modal & Checkout styles (updated, responsive, mobile-friendly) */
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.45)}
 .modal.show{display:flex}
-.modalbox{width:min(720px,100%);background:var(--panel);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px rgba(15,23,42,.12);max-height:calc(100vh - 80px);overflow:auto}
+.modalbox{width:min(720px,100%);background:var(--panel);border-radius:12px;padding:20px;border:1px solid var(--line);box-shadow:0 20px 40px rgba(15,23,42,.12);max-height:calc(100vh - 80px);overflow:auto;position:relative}
 .close{position:absolute;right:18px;top:18px;border:0;background:transparent;font-size:20px;cursor:pointer;color:var(--muted)}
+
+.checkout-head{display:flex;flex-direction:column;gap:6px}
+.checkout-head h2{margin:0}
+.progress{display:flex;gap:8px;align-items:center;color:var(--muted);font-weight:700;font-size:13px}
+.progress .step{padding:6px 8px;border-radius:8px;background:transparent}
+.progress .step.active{background:var(--accent-20, rgba(107,44,255,0.06)); color:var(--accent); border:1px solid rgba(107,44,255,0.08)}
+
+/* form layout */
 .field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .field label{font-weight:700;font-size:13px}
 .field input{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card-2)}
@@ -72,8 +83,17 @@ button,input,select,textarea{font:inherit}
 .status.show{display:block}
 .status.error{background:rgba(208,35,44,.06);color:var(--danger);border:1px solid rgba(208,35,44,.12)}
 .status.success{background:rgba(46,164,79,.06);color:var(--success);border:1px solid rgba(46,164,79,.12)}
+
+/* Payment cards */
+.payment-row{display:flex;gap:10px;flex-wrap:wrap}
+.payment-card{padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card-2);cursor:pointer;min-width:140px;display:flex;justify-content:space-between;align-items:center}
+.payment-card.selected{border-color:var(--accent);background:rgba(107,44,255,0.06);box-shadow:0 10px 28px rgba(107,44,255,0.06)}
+.payment-detail{margin-top:10px;padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.9),var(--card));border:1px dashed var(--line)}
+.copy-btn{background:transparent;border:1px solid var(--line);padding:6px 8px;border-radius:8px;cursor:pointer}
+
+/* responsive tweaks */
 @media(max-width:1000px){.products{grid-template-columns:repeat(2,1fr)}.hero-right{display:none}.hero-inner{flex-direction:column;align-items:flex-start;gap:16px}}
-@media(max-width:600px){.products{grid-template-columns:1fr}.store-head{flex-direction:column;align-items:flex-start;gap:10px}.shell{padding:18px}}
+@media(max-width:600px){.products{grid-template-columns:1fr}.store-head{flex-direction:column;align-items:flex-start;gap:10px}.shell{padding:18px}.modalbox{padding:14px}}
 </style>
 </head>
 <body>
@@ -117,7 +137,10 @@ button,input,select,textarea{font:inherit}
               </div>
             </div>
             <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#eef2ff,#fff);display:flex;align-items:center;justify-content:center;color:var(--accent-2);font-weight:800">★</div>
+              <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#eef2ff,#fff);display:flex;align-items:center;justify-content:center;color:var(--accent-2)">
+                <!-- placeholder icon -->
+                ⭐
+              </div>
               <div style="color:var(--muted)">Gratis biaya admin untuk pembelian &gt; Rp100.000</div>
             </div>
           </div>
@@ -156,7 +179,7 @@ button,input,select,textarea{font:inherit}
         </div>
         <div style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px">
           <h3>Perlu bantuan?</h3>
-          <p style="color:var(--muted)">Hubungi admin melalui WhatsApp atau Discord yang dipilih saat checkout. Pesanan akan diverifikasi secara manual.</p>
+          <p style="color:var(--muted)">Hubungi admin melalui WhatsApp yang tertera pada footer atau gunakan metode kontak yang kamu pilih saat checkout.</p>
         </div>
       </div>
     </div>
@@ -170,251 +193,432 @@ button,input,select,textarea{font:inherit}
   </div>
 </footer>
 
-<div class="modal" id="modal" aria-hidden="true">
+<!-- CHECKOUT MODAL (updated) -->
+<div class="modal" id="checkoutModal" aria-hidden="true">
   <div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
-    <button class="close" id="closeBtn" type="button" aria-label="Tutup">×</button>
+    <button class="close" id="closeModal" aria-label="Tutup">×</button>
+
     <div class="checkout-head">
       <h2 id="checkoutTitle">Checkout Pesanan</h2>
-      <div style="color:var(--muted)">Isi data berikut untuk menyelesaikan pesanan.</div>
+      <div style="color:var(--muted)">Ikuti langkah: Pilih Paket → Data Pemesan → Ringkasan → Pembayaran</div>
+      <div class="progress" id="checkoutProgress" aria-hidden="true" style="margin-top:8px">
+        <div class="step" id="stepData">01 Data</div>
+        <div class="step" id="stepSummary">02 Pesanan</div>
+        <div class="step" id="stepPayment">03 Pembayaran</div>
+      </div>
     </div>
 
-    <section style="margin-top:12px">
+    <form id="checkoutForm" novalidate style="margin-top:12px">
+      <!-- Data Pemesan -->
       <div class="field">
-        <label for="username">Username Roblox</label>
-        <input id="username" maxlength="30" placeholder="Contoh: ZeeDeveloper" autocomplete="off" spellcheck="false">
-        <div class="error" id="usernameError"></div>
+        <label for="cs_username">Username Roblox <span style="color:var(--danger)*">*</span></label>
+        <input id="cs_username" name="username" maxlength="40" placeholder="Masukkan username Roblox" autocomplete="off" />
+        <div class="error" id="err_username"></div>
       </div>
 
-      <div class="field">
-        <label>Metode kontak</label>
-        <div style="display:flex;gap:10px">
+      <fieldset class="field" style="border:none;padding:0;margin:0">
+        <label>Bagaimana kami menghubungi kamu? <span style="color:var(--danger)">*</span></label>
+        <div style="display:flex;gap:10px;align-items:center">
           <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="contactMethod" value="WhatsApp"> <span>WhatsApp</span></label>
           <label style="display:flex;align-items:center;gap:8px"><input type="radio" name="contactMethod" value="Discord"> <span>Discord</span></label>
         </div>
-        <div class="error" id="contactError"></div>
+        <div class="error" id="err_contactMethod"></div>
+      </fieldset>
+
+      <div class="field hidden" id="row_whatsapp">
+        <label for="cs_whatsapp">Nomor WhatsApp <span style="color:var(--danger)">*</span></label>
+        <input id="cs_whatsapp" name="whatsapp" inputmode="tel" maxlength="16" placeholder="Contoh: 085xxxxxxxxx" />
+        <div class="error" id="err_whatsapp"></div>
       </div>
 
-      <div class="field hidden" id="whatsappField">
-        <label for="whatsapp">Nomor WhatsApp</label>
-        <input id="whatsapp" inputmode="tel" maxlength="16" placeholder="Contoh: 0857xxxxxxxx" autocomplete="tel">
-        <div class="error" id="whatsappError"></div>
+      <div class="field hidden" id="row_discord">
+        <label for="cs_discord">Username Discord <span style="color:var(--danger)">*</span></label>
+        <input id="cs_discord" name="discordUsername" maxlength="40" placeholder="Masukkan username Discord" />
+        <div class="error" id="err_discord"></div>
       </div>
 
-      <div class="field hidden" id="discordField">
-        <label for="discord">Username Discord</label>
-        <input id="discord" maxlength="40" placeholder="Contoh: zee.dev" autocomplete="off" spellcheck="false">
-        <div class="error" id="discordError"></div>
-      </div>
-
-      <div class="field">
-        <label>Metode pembayaran</label>
-        <div style="display:flex;gap:10px">
-          <button type="button" class="payment-card" data-method="SeaBank" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);">🏦 SeaBank</button>
-          <button type="button" class="payment-card" data-method="QRIS" style="padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card-2);">▦ QRIS</button>
+      <!-- Ringkasan Pesanan -->
+      <div style="margin-top:8px;padding:12px;border-radius:10px;background:var(--card-2);border:1px solid var(--line)">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="color:var(--muted);font-size:13px">Produk</div>
+            <div id="summaryProduct" style="font-weight:800">—</div>
+            <div id="summaryOrderId" style="color:var(--muted);font-size:13px;margin-top:4px">Order ID: (dibuat server)</div>
+          </div>
+          <div id="summaryTotal" style="font-weight:900;color:var(--accent);font-size:18px">Rp —</div>
         </div>
-        <div class="error" id="paymentError"></div>
       </div>
 
-      <div id="paymentDetails" style="display:none;margin-top:8px;padding:10px;border:1px dashed var(--line);border-radius:8px;background:var(--card-2)">
-        <div id="paymentText" style="color:var(--muted)"></div>
-        <img id="qrImage" src="/assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png" alt="QRIS" style="width:160px;margin-top:8px;display:block">
+      <!-- Metode Pembayaran -->
+      <div style="margin-top:12px">
+        <div style="font-weight:700;margin-bottom:8px">Metode Pembayaran <span style="color:var(--danger)">*</span></div>
+        <div class="payment-row">
+          <div class="payment-card" data-method="SeaBank" role="button" tabindex="0" aria-pressed="false">
+            <div>
+              <div style="font-weight:800">SeaBank</div>
+              <div style="color:var(--muted);font-size:13px">Transfer rekening</div>
+            </div>
+            <div style="font-weight:800;color:var(--accent)">✓</div>
+          </div>
+          <div class="payment-card" data-method="QRIS" role="button" tabindex="0" aria-pressed="false">
+            <div>
+              <div style="font-weight:800">QRIS</div>
+              <div style="color:var(--muted);font-size:13px">Scan untuk membayar</div>
+            </div>
+            <div style="font-weight:800;color:var(--accent)">✓</div>
+          </div>
+        </div>
+        <div class="error" id="err_paymentMethod"></div>
+
+        <div id="paymentInfo" class="payment-detail hidden" aria-live="polite" style="margin-top:10px">
+          <!-- dynamically filled -->
+        </div>
       </div>
 
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="buy-primary" id="submitBtn" type="button">Buat Pesanan</button>
-        <button class="buy-ghost" id="cancelBtn" type="button">Batal</button>
+      <div style="display:flex;gap:10px;margin-top:16px;align-items:center">
+        <button id="btnConfirm" class="buy-primary" type="button">Saya Sudah Bayar — Konfirmasi Pesanan</button>
+        <button id="btnCancel" class="buy-ghost" type="button">Batal</button>
       </div>
 
-      <div id="status" class="status" role="status"></div>
-    </section>
+      <div id="statusBox" class="status" role="status" style="margin-top:12px"></div>
+    </form>
   </div>
 </div>
 
 <script>
 'use strict';
-const API_URL='/api/order';
-const WHATSAPP_NUMBER='6285780024940';
-const SEABANK_ACCOUNT='901004935916';
-const SEABANK_NAME='Muhammad Abdul Aziz';
-const products=[
-  ['50 Robux',9898],['100 Robux',16585],['200 Robux',33170],['300 Robux',49755],
-  ['400 Robux',66340],['500 Robux',82500],['600 Robux',99510],['700 Robux',116095],
-  ['800 Robux',132680],['900 Robux',149265],['1.000 Robux',165850]
+
+/*
+  Checkout frontend logic:
+  - Sends only productId, username, contactMethod, whatsapp/discordUsername, paymentMethod
+  - Shows inline validation near fields
+  - Prevent double submit and show loading state
+  - Uses waLink returned by server to open WhatsApp admin (admin number preserved)
+  - Does a lightweight preview of price by calling /api/product/:productId if endpoint exists (non-essential)
+*/
+
+/* Config */
+const API_ORDER = '/api/order';
+const API_PRODUCT = (id) => `/api/product/${id}`; // optional preview endpoint if present
+// product list (productId, label, price used only for client display; server is source of truth)
+const PRODUCTS = [
+  { id: '50', label: '50 Robux', price: 9898 },
+  { id: '100', label: '100 Robux', price: 16585 },
+  { id: '200', label: '200 Robux', price: 33170 },
+  { id: '300', label: '300 Robux', price: 49755 },
+  { id: '400', label: '400 Robux', price: 66340 },
+  { id: '500', label: '500 Robux', price: 82500 },
+  { id: '600', label: '600 Robux', price: 99510 },
+  { id: '700', label: '700 Robux', price: 116095 },
+  { id: '800', label: '800 Robux', price: 132680 },
+  { id: '900', label: '900 Robux', price: 149265 },
+  { id: '1000', label: '1000 Robux', price: 165850 }
 ];
 
-const iconPalettes = [
-  ['#ff9966','#ff5e62'],['#6dd5ed','#2193b0'],['#fbc2eb','#a18cd1'],
-  ['#f6d365','#fda085'],['#a8ff78','#78ffd6'],['#85FFBD','#FFFB7D']
-];
-function robuxSVG(color1,color2){
+const qs = (s,el=document) => el.querySelector(s);
+const qsa = (s,el=document) => Array.from(el.querySelectorAll(s));
+
+/* DOM */
+const productsEl = qs('#products');
+const modal = qs('#checkoutModal');
+const closeModalBtn = qs('#closeModal');
+const btnCancel = qs('#btnCancel');
+const btnConfirm = qs('#btnConfirm');
+const statusBox = qs('#statusBox');
+const summaryProduct = qs('#summaryProduct');
+const summaryTotal = qs('#summaryTotal');
+const summaryOrderId = qs('#summaryOrderId');
+
+/* Form elements */
+const inpUsername = qs('#cs_username');
+const inpWhatsapp = qs('#cs_whatsapp');
+const inpDiscord = qs('#cs_discord');
+const rowWhatsapp = qs('#row_whatsapp');
+const rowDiscord = qs('#row_discord');
+const errUsername = qs('#err_username');
+const errContactMethod = qs('#err_contactMethod');
+const errWhatsapp = qs('#err_whatsapp');
+const errDiscord = qs('#err_discord');
+const errPayment = qs('#err_paymentMethod');
+const paymentCards = qsa('.payment-card');
+const paymentInfo = qs('#paymentInfo');
+const progressSteps = { data: qs('#stepData'), summary: qs('#stepSummary'), payment: qs('#stepPayment') };
+
+let selectedProduct = null; // {id,label,price}
+let contactMethod = '';
+let paymentMethod = '';
+let submitting = false;
+
+/* Render products (keep existing design) */
+function money(n){ return `Rp ${Number(n).toLocaleString('id-ID')}`; }
+productsEl.innerHTML = PRODUCTS.map((p, i) => {
+  // minimal placeholder icon
+  const featured = (p.id === '400') ? 'badge' : '';
   return `
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g${color1.replace('#','')}" x1="0" x2="1">
-  ...SVG...`;
-}
-
-let selected=null; let orderId=''; let paymentMethod=''; let contactMethod='';
-const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
-function money(n){return `Rp ${Number(n).toLocaleString('id-ID')}`} 
-function makeOrderId(){return 'SOL-'+Date.now().toString(36).toUpperCase();}
-
-// Normalizes user input phone number into wa.me-friendly digits (62...)
-function normalizePhoneForWa(input){
-  if(!input) return '';
-  let digits = input.replace(/\D/g,'');
-  if(digits.startsWith('0')) return '62' + digits.slice(1);
-  if(digits.startsWith('8')) return '62' + digits;
-  if(digits.startsWith('+')) return digits.replace(/^\+/,'');
-  return digits;
-}
-
-// Render products
-$('#products').innerHTML=products.map((p,i)=>{
-  const pal = iconPalettes[i % iconPalettes.length];
-  const icon = robuxSVG(pal[0], pal[1]);
-  const isFeatured = (i===4);
-  return `
-  <article class="product ${isFeatured? 'ribbon':''}">
+  <article class="product">
     <div style="display:flex;flex-direction:column;gap:12px">
       <div class="product-inner">
-        <div class="product-image">${icon}</div>
+        <div class="product-image">💎</div>
         <div style="flex:1">
-          <div class="badge">${isFeatured? 'Paling populer':'Robux package'}</div>
-          <h3>${p[0]}</h3>
-          <div class="price-row"><div class="price">${money(p[1])}</div><div class="price-sub">Proses cepat</div></div>
+          <div class="badge">${p.label.includes('400') ? 'Paling populer' : 'Robux package'}</div>
+          <h3>${p.label}</h3>
+          <div class="price-row"><div class="price">${money(p.price)}</div><div class="price-sub">Proses cepat</div></div>
           <div class="meta">Proses cepat dan aman setelah pembayaran dikonfirmasi.</div>
         </div>
       </div>
-      <div class="actions"><button class="buy-primary" data-index="${i}">Pilih paket</button></div>
+      <div class="actions"><button class="buy-primary" data-product-id="${p.id}">Pilih paket</button></div>
     </div>
   </article>`;
 }).join('');
 
-// Open modal only for primary buy buttons (use event delegation to avoid missing handlers)
-document.addEventListener('click', (e)=>{
-  const buy = e.target.closest('[data-index]');
-  if(buy && buy.dataset && typeof buy.dataset.index !== 'undefined'){
-    const idx = Number(buy.dataset.index);
-    if(!Number.isNaN(idx)) openModal(idx);
+/* Open modal */
+document.addEventListener('click', (e) => {
+  const pick = e.target.closest('[data-product-id]');
+  if (pick) {
+    const pid = pick.getAttribute('data-product-id');
+    const prod = PRODUCTS.find(x => x.id === pid);
+    if (!prod) return;
+    selectedProduct = prod;
+    openModal();
   }
 });
 
-function openModal(index){
-  selected = products[index];
-  orderId = makeOrderId();
-  try{ if($('#username')) $('#username').value=''; if($('#whatsapp')) $('#whatsapp').value=''; if($('#discord')) $('#discord').value=''; }catch(e){}
-  paymentMethod=''; contactMethod='';
-  if($('#whatsappField')) $('#whatsappField').classList.add('hidden');
-  if($('#discordField')) $('#discordField').classList.add('hidden');
-  if($('#paymentDetails')) { $('#paymentDetails').style.display='none'; $('#paymentText').textContent=''; }
-  if($('#status')) { $('#status').className='status'; $('#status').textContent=''; }
-  if($('#checkoutTitle')) $('#checkoutTitle').textContent = `Checkout Pesanan — ${selected[0]}`;
-  $('#modal').classList.add('show'); $('#modal').setAttribute('aria-hidden','false');
+function openModal(){
+  if (!selectedProduct) return;
+  // reset form fields & errors
+  inpUsername.value = '';
+  inpWhatsapp.value = '';
+  inpDiscord.value = '';
+  errUsername.textContent = errContactMethod.textContent = errWhatsapp.textContent = errDiscord.textContent = errPayment.textContent = '';
+  statusBox.className = 'status'; statusBox.textContent = '';
+  // reset selections
+  paymentCards.forEach(pc => { pc.classList.remove('selected'); pc.setAttribute('aria-pressed','false'); });
+  paymentInfo.classList.add('hidden'); paymentInfo.innerHTML = '';
+  rowWhatsapp.classList.add('hidden'); rowDiscord.classList.add('hidden');
+  contactMethod = ''; paymentMethod = '';
+  // summary
+  summaryProduct.textContent = selectedProduct.label;
+  summaryTotal.textContent = 'Rp —'; // show preview after fetch
+  summaryOrderId.textContent = 'Order ID: (dibuat server)';
+  // set progress
+  setProgress(0);
+  // show modal
+  modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
   document.body.style.overflow = 'hidden';
+  // attempt to fetch server price preview (non-blocking)
+  fetch(API_PRODUCT(selectedProduct.id)).then(r => {
+    if (!r.ok) return;
+    return r.json();
+  }).then(j => {
+    if (j && j.amount) summaryTotal.textContent = money(j.amount);
+  }).catch(()=> {
+    // fallback to client price for preview (but server is authoritative)
+    summaryTotal.textContent = money(selectedProduct.price);
+  });
 }
+
 function closeModal(){
-  $('#modal').classList.remove('show'); $('#modal').setAttribute('aria-hidden','true');
+  modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
   document.body.style.overflow = '';
 }
 
-document.addEventListener('change', (e)=>{
-  try{
-    if(!e.target) return;
-    if(e.target.name === 'contactMethod'){
-      contactMethod = e.target.value;
-      if($('#whatsappField')) $('#whatsappField').classList.toggle('hidden', contactMethod !== 'WhatsApp');
-      if($('#discordField')) $('#discordField').classList.toggle('hidden', contactMethod !== 'Discord');
-      if($('#contactError')) $('#contactError').textContent='';
-    }
-  }catch(err){console.error(err)}
-});
-
-document.addEventListener('click', (e)=>{
-  const card = e.target.closest('.payment-card');
-  if(card && card.dataset && card.dataset.method){
-    paymentMethod = card.dataset.method;
-    $$('.payment-card').forEach(c=>c.style.boxShadow='none');
-    card.style.boxShadow = '0 8px 18px rgba(37,99,235,.08)';
-    if($('#paymentDetails')) $('#paymentDetails').style.display = 'block';
-    if(paymentMethod === 'SeaBank'){
-      if($('#paymentText')) $('#paymentText').innerHTML = `Transfer ke SeaBank <strong>${SEABANK_ACCOUNT}</strong> a.n. <strong>${SEABANK_NAME}</strong>. Setelah transfer, kirim bukti pembayaran [...]`;
-      if($('#qrImage')) $('#qrImage').style.display='none';
+/* Contact method toggles (delegated) */
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.name === 'contactMethod') {
+    contactMethod = e.target.value;
+    errContactMethod.textContent = '';
+    if (contactMethod === 'WhatsApp') {
+      rowWhatsapp.classList.remove('hidden'); rowDiscord.classList.add('hidden');
+      inpDiscord.value = '';
     } else {
-      if($('#paymentText')) $('#paymentText').textContent = 'Scan QRIS berikut untuk membayar, lalu simpan bukti pembayaran untuk konfirmasi kepada admin.';
-      if($('#qrImage')) $('#qrImage').style.display='block';
+      rowDiscord.classList.remove('hidden'); rowWhatsapp.classList.add('hidden');
+      inpWhatsapp.value = '';
     }
-    if($('#paymentError')) $('#paymentError').textContent='';
+    updateProgressState();
   }
 });
 
-function clearErrors(){
-  ['usernameError','contactError','whatsappError','discordError','paymentError'].forEach(id=>{ const el = document.getElementById(id); if(el) el.textContent=''; });
-  if($('#status')){ $('#status').className='status'; $('#status').textContent=''; }
-}
+/* Payment card selection */
+paymentCards.forEach(pc => {
+  pc.addEventListener('click', () => {
+    paymentCards.forEach(x => { x.classList.remove('selected'); x.setAttribute('aria-pressed','false'); });
+    pc.classList.add('selected'); pc.setAttribute('aria-pressed','true');
+    paymentMethod = pc.getAttribute('data-method');
+    errPayment.textContent = '';
+    renderPaymentDetail(paymentMethod);
+    updateProgressState();
+  });
+  pc.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pc.click(); } });
+});
 
-function validate(){
-  clearErrors();
-  let ok = true;
-  const usernameEl = $('#username'); const username = usernameEl ? usernameEl.value.trim() : '';
-  if(!username){ if($('#usernameError')) $('#usernameError').textContent='Username Roblox wajib diisi.'; ok=false; }
-  if(!contactMethod){ if($('#contactError')) $('#contactError').textContent='Pilih metode kontak (WhatsApp atau Discord).'; ok=false; }
-  else if(contactMethod === 'WhatsApp'){
-    const waEl = $('#whatsapp'); const wa = waEl ? waEl.value.trim() : '';
-    const digits = wa.replace(/\D/g,'');
-    if(!wa){ if($('#whatsappError')) $('#whatsappError').textContent='Nomor WhatsApp wajib diisi.'; ok=false; }
-    else if(digits.length < 6 || digits.length > 15){ if($('#whatsappError')) $('#whatsappError').textContent='Masukkan nomor WhatsApp yang valid.'; ok=false; }
-  } else {
-    const dcEl = $('#discord'); const dc = dcEl ? dcEl.value.trim() : '';
-    if(!dc){ if($('#discordError')) $('#discordError').textContent='Username Discord wajib diisi.'; ok=false; }
+function renderPaymentDetail(method){
+  paymentInfo.classList.remove('hidden');
+  paymentInfo.innerHTML = '';
+  if (method === 'SeaBank') {
+    paymentInfo.innerHTML = `
+      <div style="font-weight:800;margin-bottom:6px">Pembayaran SeaBank</div>
+      <div style="color:var(--muted);margin-bottom:8px">Transfer tepat sesuai total pesanan. Setelah transfer, simpan bukti pembayaran dan lanjutkan konfirmasi.</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>No. Rekening</strong><div>901004935916</div></div>
+          <button class="copy-btn" data-copy="901004935916">Copy</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Atas Nama</strong><div>Muhammad Abdul Aziz</div></div>
+          <button class="copy-btn" data-copy="Muhammad Abdul Aziz">Copy</button>
+        </div>
+      </div>
+    `;
+  } else if (method === 'QRIS') {
+    paymentInfo.innerHTML = `
+      <div style="font-weight:800;margin-bottom:6px">Pembayaran QRIS</div>
+      <div style="color:var(--muted);margin-bottom:8px">Scan QRIS berikut menggunakan aplikasi pembayaran kamu. Bayar sesuai total pesanan. Simpan bukti pembayaran setelah berhasil.</div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div style="width:140px;height:140px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fff">
+          <img src="/assets/Kode%20QRIS%20MUHAMMAD%20ABDUL%20AZIZ,%20Gaming%20(1).png" alt="QRIS" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:6px" />
+        </div>
+        <div style="color:var(--muted)">Scan QR di samping lalu simpan bukti pembayaran. Bayar sesuai total pesanan.</div>
+      </div>
+    `;
   }
-  if(!paymentMethod){ if($('#paymentError')) $('#paymentError').textContent='Pilih metode pembayaran.'; ok=false; }
-  return ok;
+  // attach copy handlers
+  qsa('.copy-btn', paymentInfo).forEach(b => b.addEventListener('click', () => {
+    const v = b.getAttribute('data-copy') || '';
+    navigator.clipboard?.writeText(v).then(() => { const prev = b.textContent; b.textContent = 'Tersalin'; setTimeout(()=> b.textContent = prev, 1400); })
+      .catch(() => { /* ignore */ });
+  }));
 }
 
-async function submitOrder(){
-  if(!selected){ if($('#status')) { $('#status').className='status show error'; $('#status').textContent='Pilih paket terlebih dahulu.'; } return; }
-  if(!validate()) return;
+/* Validation helpers */
+function validateUsername(){
+  const v = inpUsername.value.trim();
+  if (!v) { errUsername.textContent = 'Username Roblox wajib diisi'; return false; }
+  errUsername.textContent = ''; return true;
+}
+function validateContactMethod(){
+  if (!contactMethod) { errContactMethod.textContent = 'Pilih metode kontak (WhatsApp atau Discord)'; return false; }
+  errContactMethod.textContent = '';
+  if (contactMethod === 'WhatsApp') return validateWhatsapp();
+  return validateDiscord();
+}
+function validateWhatsapp(){
+  const v = inpWhatsapp.value.trim();
+  const digits = v.replace(/\D/g,'');
+  if (!v) { errWhatsapp.textContent = 'Nomor WhatsApp wajib diisi'; return false; }
+  if (!/^[0-9]{9,15}$/.test(digits)) { errWhatsapp.textContent = 'Nomor WhatsApp tidak valid (9–15 digit)'; return false; }
+  errWhatsapp.textContent = ''; return true;
+}
+function validateDiscord(){
+  const v = inpDiscord.value.trim();
+  if (!v) { errDiscord.textContent = 'Username Discord wajib diisi'; return false; }
+  errDiscord.textContent = ''; return true;
+}
+function validatePaymentMethod(){
+  if (!paymentMethod) { errPayment.textContent = 'Pilih metode pembayaran'; return false; }
+  errPayment.textContent = ''; return true;
+}
 
-  const username = $('#username') ? $('#username').value.trim() : '';
-  const rawContact = (contactMethod === 'WhatsApp') ? ($('#whatsapp') ? $('#whatsapp').value.trim() : '') : ($('#discord' ? $('#discord').value.trim() : ''));
-  const contact = contactMethod === 'WhatsApp' ? normalizePhoneForWa(rawContact) : rawContact;
-  const payload = { orderId: orderId || makeOrderId(), product: selected[0], price: selected[1], username, contact, contactMethod, paymentMethod };
+function updateProgressState(){
+  // 0 = data incomplete, 1 = data ok, 2 = payment selected
+  const step0 = validateUsername() && (contactMethod ? validateContactMethod() : false);
+  const step1 = step0;
+  const step2 = step1 && !!paymentMethod;
+  setProgress(step2 ? 2 : (step1 ? 1 : 0));
+  // enable confirm only if all valid
+  btnConfirm.disabled = !(validateUsername() && validateContactMethod() && validatePaymentMethod()) || submitting;
+}
+function setProgress(n){
+  progressSteps.data.classList.toggle('active', n >= 0);
+  progressSteps.summary.classList.toggle('active', n >= 1);
+  progressSteps.payment.classList.toggle('active', n >= 2);
+}
 
-  const btn = $('#submitBtn'); if(btn) { btn.disabled = true; btn.textContent = 'Membuat pesanan...'; }
-  try{
-    let res, data = {};
-    try{
-      res = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      data = await res.json().catch(()=>({}));
-    }catch(fetchErr){
-      console.warn('Fetch failed, using fallback success for local demo', fetchErr);
-      res = { ok: true };
-      data = { success: true };
+/* Confirm (submit) order */
+btnConfirm.addEventListener('click', async () => {
+  clearStatus();
+  if (submitting) return;
+  // run validations
+  const okUser = validateUsername();
+  const okContact = validateContactMethod();
+  const okPayment = validatePaymentMethod();
+  if (!okUser || !okContact || !okPayment) { setStatus('Periksa kembali isian yang wajib diisi.', true); return; }
+
+  // prepare payload (NO price)
+  const payload = {
+    productId: selectedProduct.id,
+    username: inpUsername.value.trim(),
+    contactMethod: contactMethod,
+    paymentMethod: paymentMethod
+  };
+  if (contactMethod === 'WhatsApp') payload.whatsapp = inpWhatsapp.value.trim().replace(/\D/g,'');
+  if (contactMethod === 'Discord') payload.discordUsername = inpDiscord.value.trim();
+
+  // UI disable / loading
+  submitting = true;
+  btnConfirm.disabled = true;
+  btnConfirm.textContent = 'Memproses...';
+
+  try {
+    const res = await fetch(API_ORDER, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const j = await res.json().catch(() => ({ success:false, message: 'Response not JSON' }));
+    if (!res.ok || !j || !j.success) {
+      const msg = j?.message || `Gagal membuat order (${res.status})`;
+      setStatus(msg, true);
+      submitting = false;
+      btnConfirm.disabled = false;
+      btnConfirm.textContent = 'Saya Sudah Bayar — Konfirmasi Pesanan';
+      return;
     }
 
-    if(!res.ok || !data.success){ throw new Error(data.message || 'Gagal membuat pesanan.'); }
+    // success — update summary with server amount and orderId
+    summaryOrderId.textContent = `Order ID: ${j.orderId || j.orderId}`;
+    summaryTotal.textContent = j.amountFormatted || (j.amount ? money(j.amount) : summaryTotal.textContent);
 
-    if($('#status')){ $('#status').className='status show success'; $('#status').textContent = `Pesanan ${payload.orderId} berhasil dibuat.`; }
+    setStatus('Order berhasil dibuat. Membuka WhatsApp admin...', false, true);
 
-    const contactLine = contactMethod === 'WhatsApp' ? `WhatsApp: ${contact}` : `Discord: ${contact}`;
-    const message = `Halo admin, saya ingin konfirmasi pesanan ${payload.orderId}.\nUsername Roblox: ${username}\nProduk: ${payload.product}\nTotal: ${money(payload.price)}\nKontak: ${contactLine}`;
+    // open waLink from server (preferred)
+    const wa = j.waLink || j.link || (`https://wa.me/6285780024940?text=Pesanan%20${encodeURIComponent(j.orderId || '')}`);
+    // small delay so user sees success message
+    setTimeout(() => {
+      try { window.open(wa, '_blank'); } catch(e){ /* ignore */ }
+      closeModal();
+    }, 700);
 
-    const waLink = (data && data.waLink) ? data.waLink : `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  } catch (err) {
+    console.error(err);
+    setStatus('Terjadi kesalahan jaringan. Silakan coba lagi.', true);
+    submitting = false;
+    btnConfirm.disabled = false;
+    btnConfirm.textContent = 'Saya Sudah Bayar — Konfirmasi Pesanan';
+  }
+});
 
-    setTimeout(()=>{
-      closeModal(); try{ window.open(waLink,'_blank','noopener'); }catch(e){}
-    },450);
+/* Cancel/close handlers */
+btnCancel.addEventListener('click', closeModal);
+closeModalBtn.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+document.addEventListener('keydown', (e)=> { if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
 
-  } catch(err){ console.error(err); if($('#status')){ $('#status').className='status show error'; $('#status').textContent = err.message || 'Terjadi kesalahan saat membuat pesanan.'; } }
-  finally{ if(btn){ btn.disabled = false; btn.textContent = 'Buat Pesanan'; } }
+/* helpers */
+function setStatus(msg, isError=false, showSuccess=false){
+  statusBox.className = 'status show ' + (isError ? 'error' : (showSuccess ? 'success' : ''));
+  statusBox.textContent = msg;
+}
+function clearStatus(){
+  statusBox.className = 'status'; statusBox.textContent = '';
 }
 
-if($('#submitBtn')) $('#submitBtn').addEventListener('click', submitOrder);
-if($('#cancelBtn')) $('#cancelBtn').addEventListener('click', closeModal);
-if($('#closeBtn')) $('#closeBtn').addEventListener('click', closeModal);
-if($('#modal')) $('#modal').addEventListener('click', e=>{ if(e.target.id === 'modal') closeModal(); });
-document.addEventListener('keydown', e=>{ if(e.key==='Escape' && $('#modal') && $('#modal').classList.contains('show')) closeModal(); });
+/* small UX: validate on input */
+inpUsername.addEventListener('input', updateProgressState);
+inpWhatsapp.addEventListener('input', updateProgressState);
+inpDiscord.addEventListener('input', updateProgressState);
+
+// ensure contact radio clicks update state
+qsa('input[name="contactMethod"]').forEach(r => r.addEventListener('change', updateProgressState));
 </script>
 </body>
 </html>
