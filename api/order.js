@@ -1,72 +1,23 @@
-// api/order.js
-// Serverless handler for Vercel (or any Node environment that uses same signature)
-// Receives POST /api/order, posts summary to Discord webhook, and returns a waLink
-
-module.exports = async (req, res) => {
-  try {
-    if (req.method !== 'POST') {
-      res.setHeader('Allow', 'POST');
-      return res.status(405).json({ success: false, message: 'Method not allowed' });
-    }
-
-    const body = req.body || (await new Promise((r) => {
-      let data = '';
-      req.on('data', chunk => data += chunk);
-      req.on('end', () => {
-        try { r(JSON.parse(data)); } catch (e) { r({}); }
-      });
-    }));
-
-    const { orderId, product, price, username, contact, contactMethod, paymentMethod } = body;
-    if (!username || !product) return res.status(400).json({ success: false, message: 'username and product required' });
-
-    const savedOrderId = orderId || `SOL-${Date.now().toString(36).toUpperCase()}`;
-
-    // Build message for Discord
-    const lines = [
-      `📦 Pesanan baru — ${savedOrderId}`,
-      `Produk: ${product}`,
-      `Total: Rp ${Number(price || 0).toLocaleString('id-ID')}`,
-      `Username Roblox: ${username}`,
-      `Kontak (${contactMethod || '-' }): ${contact || '-'}`,
-      `Pembayaran: ${paymentMethod || '-'}`
-    ];
-
-    const discordPayload = { content: lines.join('\n') };
-    const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
-
-    if (!DISCORD_WEBHOOK) {
-      console.warn('DISCORD_WEBHOOK not set — skipping Discord notification');
-    } else {
-      try {
-        // Use global fetch (Node 18+ / Vercel). Fallback to require('node-fetch') if not available.
-        const doFetch = typeof fetch === 'function' ? fetch : (await import('node-fetch')).default;
-        const r = await doFetch(DISCORD_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(discordPayload),
-          // no timeout parameter here; hosting platform controls function timeout
-        });
-        if (r.status !== 204 && r.status !== 200) {
-          const text = await r.text().catch(() => null);
-          console.warn('Discord webhook returned', r.status, text);
-        }
-      } catch (err) {
-        console.error('Failed to call Discord webhook', err?.message || err);
-        // continue — do not fail order creation because webhook failed
-      }
-    }
-
-    // Build waLink: prefer customer's WhatsApp when they selected it, otherwise admin number
-    const ADMIN_WHATSAPP = process.env.ADMIN_WHATSAPP || '6285780024940';
-    let phone = ADMIN_WHATSAPP;
-    if (contactMethod === 'WhatsApp' && contact) phone = contact.replace(/\D/g, '');
-    const text = encodeURIComponent(`Halo admin, saya ingin konfirmasi pesanan ${savedOrderId}.\nProduk: ${product}\nUsername: ${username}`);
-    const waLink = `https://wa.me/${phone}?text=${text}`;
-
-    return res.status(201).json({ success: true, orderId: savedOrderId, waLink });
-  } catch (err) {
-    console.error('api/order error', err);
-    return res.status(500).json({ success: false, message: 'gagal membuat pesanan' });
-  }
-};
+/**
+ * Solstice Store order notification API.
+ * Harga selalu dihitung server berdasarkan productId; input browser tidak dipercaya.
+ */
+const PRODUCTS = Object.freeze({
+  "50": { name: "50 Robux", price: 8000 },
+  "100": { name: "100 Robux", price: 16000 },
+  "200": { name: "200 Robux", price: 30000 },
+  "400": { name: "400 Robux", price: 60000 },
+  "800": { name: "800 Robux", price: 120000 },
+  "1200": { name: "1200 Robux", price: 180000 },
+  "2000": { name: "2000 Robux", price: 300000 },
+  "4500": { name: "4500 Robux", price: 675000 },
+});
+const PAYMENT_METHODS = new Set(["SeaBank", "QRIS"]);
+function sendJson(res,status,payload){res.status(status);res.setHeader("Content-Type","application/json; charset=utf-8");return res.json(payload)}
+function getBody(req){if(req.body&&typeof req.body==='object'&&!Array.isArray(req.body))return req.body;if(typeof req.body==='string')return JSON.parse(req.body);return null}
+function validOrderId(v){return typeof v==='string'&&/^SOL-[A-Z0-9]{6,40}$/.test(v)}
+function validUsername(v){return typeof v==='string'&&/^[A-Za-z0-9_]{3,30}$/.test(v.trim())}
+function validWhatsapp(v){return typeof v==='string'&&/^08[0-9]{8,12}$/.test(v.trim())}
+function validDiscord(v){return typeof v==='string'&&/^[A-Za-z0-9_.-]{2,40}(#[0-9]{4})?$/.test(v.trim())}
+async function notifyDiscord(order){const webhookUrl=process.env.DISCORD_WEBHOOK_URL;if(!webhookUrl)throw new Error('DISCORD_WEBHOOK_URL belum dikonfigurasi.');const contactValue=order.contactMethod==='WhatsApp'?order.whatsapp:order.discordUsername;const payload={embeds:[{title:'🧾 Order Baru — Menunggu Verifikasi Pembayaran',color:order.paymentMethod==='QRIS'?16753920:3447003,fields:[{name:'No. Pesanan / Invoice',value:order.orderId,inline:true},{name:'Username Roblox',value:order.username,inline:true},{name:'Produk',value:order.product,inline:false},{name:'Nominal',value:`Rp${order.amount.toLocaleString('id-ID')}`,inline:true},{name:'Metode Pembayaran',value:order.paymentMethod,inline:true},{name:`Kontak ${order.contactMethod}`,value:contactValue,inline:false},{name:'Status',value:'Customer menyatakan pembayaran selesai. Cocokkan transaksi sebelum memproses order.',inline:false}],timestamp:new Date().toISOString()}]};const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),10000);try{const response=await fetch(webhookUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:controller.signal});if(!response.ok)throw new Error(`Discord webhook returned HTTP ${response.status}.`)}finally{clearTimeout(timeout)}}
+export default async function handler(req,res){if(req.method!=='POST'){res.setHeader('Allow','POST');return sendJson(res,405,{ok:false,message:'Method tidak diizinkan. Gunakan POST.'})}if(!process.env.DISCORD_WEBHOOK_URL)return sendJson(res,500,{ok:false,message:'DISCORD_WEBHOOK_URL belum dikonfigurasi di Vercel.'});let input;try{input=getBody(req)}catch(_){return sendJson(res,400,{ok:false,message:'Request body harus berupa JSON yang valid.'})}if(!input||typeof input!=='object'||Array.isArray(input))return sendJson(res,400,{ok:false,message:'Request body harus berupa object JSON.'});const {orderId,productId,username,contactMethod,whatsapp,discordUsername,paymentMethod}=input;if(!validOrderId(orderId))return sendJson(res,400,{ok:false,message:'Order ID tidak valid.'});if(!validUsername(username))return sendJson(res,400,{ok:false,message:'Username Roblox tidak valid.'});if(typeof productId!=='string'||!Object.prototype.hasOwnProperty.call(PRODUCTS,productId))return sendJson(res,400,{ok:false,message:'Product ID tidak valid.'});if(!['WhatsApp','Discord'].includes(contactMethod))return sendJson(res,400,{ok:false,message:'Metode kontak tidak valid.'});if(contactMethod==='WhatsApp'&&!validWhatsapp(whatsapp))return sendJson(res,400,{ok:false,message:'Nomor WhatsApp tidak valid.'});if(contactMethod==='Discord'&&!validDiscord(discordUsername))return sendJson(res,400,{ok:false,message:'Username Discord tidak valid.'});if(!PAYMENT_METHODS.has(paymentMethod))return sendJson(res,400,{ok:false,message:'Metode pembayaran tidak valid.'});const product=PRODUCTS[productId];const order={orderId,username:username.trim(),product:product.name,amount:product.price,paymentMethod,contactMethod};if(contactMethod==='WhatsApp')order.whatsapp=whatsapp.trim();else order.discordUsername=discordUsername.trim();try{await notifyDiscord(order);return sendJson(res,201,{ok:true,orderId,message:'Pesanan berhasil dikirim ke admin untuk verifikasi.'})}catch(_){return sendJson(res,502,{ok:false,message:'Pesanan belum terkirim ke Discord. Silakan coba lagi.'})}}
